@@ -1,1 +1,0 @@
-CREATE VIEW v_events_course SELECT course_students.*,events.id as event_id,events.attendees_course,events.attendees_year FROM course_students JOIN events ON JSON_CONTAINS(events.attendees_course,course_students.course_id) GROUP BY student_id,events.id;
