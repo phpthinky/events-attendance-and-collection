@@ -53,8 +53,12 @@ class Course extends MY_Controller
 				echo json_encode(recordexist());
 				exit();
 			}
-			$result = $this->mcourse->add($data2add);
-			var_dump($result);
+			if($result = $this->mcourse->add($data2add)){
+				echo json_encode(saveSuccess());
+			}else{
+				echo json_encode(saveFailed());
+			}
+
 			exit();	
 		}
 		

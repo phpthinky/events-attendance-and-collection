@@ -11,12 +11,13 @@ class Dashboard extends MY_Controller
 		if(!$this->aauth->is_loggedin()){
 			redirect('login');
 		}
+		$this->load->model('students/mstudents');
 	}
 	public function index($site='')
 	{
 		// code...
 		$data = new stdClass();
-		   $data->affected_tindividual = 0;
+		   $data->total_students = $this->mstudents->total();
 		   $data->affected_tfamily = 0;
 		   $data->affected_tbarangay = 0;
 

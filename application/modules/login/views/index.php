@@ -32,8 +32,8 @@
                 <br />
 
                 <div>
-                  <h1><i class="fa fa-paw"></i> SOE</h1>
-                  <p>©2016 All Rights Reserved. SOE! is a Bootstrap 4 template. Privacy and Terms</p>
+                  <h1><img src="<?=base_url('assets/img/org-logo.png')?>" style="width: 150px;height: 130px;"></h1>
+                  <p>©<?=date('Y')?> Students Organization Collections and Events Monitoring System</p>
                 </div>
               </div>
             </form>

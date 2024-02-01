@@ -44,22 +44,31 @@
  		$data = new stdClass();
 
  		$users = $this->aauth->get_user();
-
+ 		$data->permissions = $this->aauth->list_perms();
 
  		$data->email = $users->email;
  		$data->username = $users->email;
- 		$data->list_users = $this->aauth->list_users();
+ 		$list_users = $this->aauth->list_users();
+ 		foreach ($list_users as $key => $value) {
+ 			// code...
+ 			$perms = $this->aauth->get_user_perms($value->id);
+ 			$list_users[$key]->permissions = $perms;
+ 		}
+
+
+ 		$data->list_users = $list_users;
  		$data->content = 'users/index';
  		$this->template->load($this->theme,$data);
  	}
- 	public function add_user($value='')
+ 	private function add_user($value='')
  	{
  		// code...
  		$email = $this->input->post('email');
  		$username = $this->input->post('username');
  		$passcode = $this->input->post('passcode');
- 		if($add_user = $this->aauth->create_user($email,$passcode,$username)){
- 		echo json_encode(array('status'=>true,'msg'=>'User successfully added','data'=>$add_user));
+ 		if($user_id = $this->aauth->create_user($email,$passcode,$username)){
+ 			$this->aauth->allow_user($user_id,$this->input->post('user_permission'));
+ 		echo json_encode(array('status'=>true,'msg'=>'User successfully added','data'=>$user_id));
 
  		}else{ 		
  			echo json_encode(array('status'=>false,'msg'=>'Failed! No user was added.','data'=>$add_user));
@@ -68,16 +77,24 @@
  		}
  	}
 
- 	public function edit_user($value='')
+ 	private function edit_user($value='')
  	{
  		// code...
  		$user_id = $this->input->post('user_id');
  		$email = $this->input->post('email');
  		$username = $this->input->post('username');
- 		$passcode = $this->input->post('passcode')
- 		;
+ 		$passcode = $this->input->post('passcode');
+
+ 				$perms = $this->aauth->get_user_perms($user_id);
+ 				foreach ($perms as $key => $value) {
+ 					// code...
+ 					$this->aauth->deny_user($user_id,$value->id);
+ 				}
+ 			$this->aauth->allow_user($user_id,$this->input->post('user_permission')); 
+
  		if($add_user = $this->aauth->update_user($user_id,$email,$passcode,$username)){
- 		echo json_encode(array('status'=>true,'msg'=>'User successfully added','data'=>$add_user));
+
+ 		echo json_encode(array('status'=>true,'msg'=>'User successfully updated','data'=>$add_user));
 
  		}else{ 		
  			echo json_encode(array('status'=>false,'msg'=>'Failed! No user was added.','data'=>$add_user));
@@ -135,6 +152,13 @@
  		}
  	}
 
+
+ 	public function create_permission($value='')
+ 	{
+ 		// code...
+ 		//$this->aauth->create_perm('Attendance Officer','The one who has permission to check the attendance of the students');
+ 		//$this->aauth->create_perm('Collection Officer','The one who has permission to collect payment from the students');
+ 	}
 
 
 

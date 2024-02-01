@@ -3,7 +3,7 @@
 		<div class="card-header">
 			<h2>Create events</h2>
 		</div>
-		<div class="card-body">
+		<div class="card-body form">
 			<form class="form-responsive" action="<?=current_url('')?>" method="POST" id="form-add-events">
 				<div class="row form-group">
 					<label class="col-md-3" for="event_title">Event Title</label>
@@ -20,12 +20,18 @@
 				</div>
 
 				<div class="row form-group">
-					<label class="col-md-3" for="event_title">Event End Date</label>
+					<label class="col-md-3" for="event_title">How many days</label>
 					<div class="col-md-9">
-						<input class="form-control min-date" name="event_enddate" id="event_enddate" type="date" value="<?=date('Y-m-d')?>">
+						<input class="form-control min-date" name="no_days" id="no_days" type="number" value="1" >
 					</div>
 				</div>
 
+				<div class="row form-group">
+					<label class="col-md-3" for="event_title">Event End Date</label>
+					<div class="col-md-9">
+						<span class="form-control" id="event_enddate"><?=date('m/d/Y')?></span>
+					</div>
+				</div>
 				<hr>
 				<label>Time in-out</label>
 
@@ -117,12 +123,16 @@
 					<label class="col-md-3" for="absent_penalty">Select semester</label>
 					<div class="col-md-9">
 					<div class="row form-group">
-						<label class="col-md-12 input-radio" style="padding:10px;cursor: pointer;"><input type="radio" name="semester" value="1" <?php if ($semester_settings->current_semester == 1): ?>
-							checked
-						<?php endif ?>>	First Semester</label>
-						<label class="col-md-12 input-radio" style="padding:10px;cursor: pointer;"><input type="radio" name="semester" value="2" <?php if ($semester_settings->current_semester == 2): ?>
-							checked
-						<?php endif ?>> Second Semester</label>
+
+						<select class="form-control" name="semester">
+							<option value="1" <?php if ($semester == 1): ?>
+							selected
+						<?php endif ?>>First semester</option>
+							<option value="2" <?php if ($semester == 2): ?>
+							selected
+						<?php endif ?>>Second semester</option>
+						</select>
+						
 					</div>
 					</div>
 				</div>
@@ -130,6 +140,7 @@
 				<div class="row form-group">
 					<div class="d-none">
 						<input type="hidden" name="event_id" value="<?=isset($event_info->id) ? $event_info->id : 0?>">
+						<input type="hidden" name="year_id" value="<?=isset($year_id) ? $year_id : 0?>">
 					</div>
 					<label class="col-md-3" for="event_title">&nbsp;</label>
 					<div class="col-md-9">

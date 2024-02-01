@@ -45,13 +45,15 @@ $('.btn-trash-user').on('click',function(e){
 $('.btn-modify-user').on('click',function(e){
   e.preventDefault();
   var parent = $(this).parent().parent();
-  $('#modal-edit-user .modal-title').text('Modify user 1');
+  $('#modal-edit-user .modal-title').text('Modify user');
   $('#modal-edit-user').modal('show');
   var id = $(this).data('id');
   //alert(id)
+  console.log($(this).data('perms'));
   $('form#form-edit-userr input[name="user_id"]').val(id);
   $('form#form-edit-userr input[name="username"]').val($('.row-username-'+id).text());
   $('form#form-edit-userr input[name="email"]').val($('.row-email-'+id).text());
+  $('form#form-edit-userr select[name="user_permission"]').val($(this).data('perms'));
   $('form#form-edit-userr input[name="action"]').val('edit-user');
 })
 

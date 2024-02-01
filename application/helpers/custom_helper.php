@@ -14,9 +14,13 @@ if (!function_exists('is_active')) {
 			case 2:
 			$status = 'Completed';
 			break;
+			case 3:
+			$status = 'Canceled';
+			case 4:
+			$status = 'Deleted';
 			default:
 				// code...
-			$status ="Inactive";
+			$status ="Pending";
 				break;
 		}
 		return $status;
@@ -81,6 +85,13 @@ if (!function_exists('tomdy')) {
 		}
 }
 
+if (!function_exists('monthyear')) {
+			function monthyear($date){
+					$date = strtotime($date);
+					return date('M Y',$date);
+		
+		}
+}
 
 if (!function_exists('toMMdY')) {
 			function toMMdY($date){
@@ -132,7 +143,7 @@ if (!function_exists('dbError')) {
 		}
 }
 if (!function_exists('savesuccess')) {
-			function savesuccess($type=false){
+			function saveSuccess($type=false){
 				if (!$type) {
 					// code...
 
@@ -142,6 +153,19 @@ if (!function_exists('savesuccess')) {
 		return json_encode(array('status'=>true,'msg'=>'Successfully added.'));
 				}
 
+
+		}
+}
+
+if (!function_exists('dbError')) {
+			function saveFailed($type=false){
+				if (!$type) {
+					// code...
+		return array('status'=>false,'msg'=>'No data was added.');
+				}else{
+
+		return json_encode(array('status'=>false,'msg'=>'No data was added. Database error occcured.'));
+				}
 
 		}
 }
@@ -221,75 +245,6 @@ if (!function_exists('to_batch_array')) {
 	}
 }
 
-if (!function_exists('job_status')) {
-	// code...
-	function job_status($num){
-		$job ='Unknown';
-		switch ($num) {
-			case 1:
-				// code...
-			$job = 'Job Order';
-				break;
-			
-			case 2:
-				// code...
-			$job = 'Contractual';
-				break;
-			case 3:
-				// code...
-			$job = 'Permanent';
-				break;
-			case 4:
-				// code...
-			$job = 'Resigned';
-				break;
-			case 5:
-				// code...
-			$job = 'Retired';
-				break;
-
-			default:
-				// code...
-			$job = 'Not Specified';
-				break;
-		}
-		return $job;
-	}
-
-}
-
-
-if (!function_exists('booking_status')) {
-	// code...
-	function booking_status($num){
-		$job ='Unknown';
-		switch ($num) {
-			case 1:
-				// code...
-			$job = 'Approved';
-				break;
-			
-			case 2:
-				// code...
-			$job = 'Disapproved';
-				break;
-			case 3:
-				// code...
-			$job = 'Canceled';
-				break;
-			case 4:
-				// code...
-			$job = 'Removed';
-				break;
-			default:
-				// code...
-			$job = 'Pending';
-				break;
-		}
-		return $job;
-	}
-
-}
 
 
 // ------------------------------------------------------------------------
@@ -401,14 +356,96 @@ if ( ! function_exists('semester'))
 	 */
 	function semester($num = '', $protocol = null)
 	{
-		if ($numb == 1) {
+		if ($num == 1) {
 			// code...
 			$sem = 'First semester';
-		}elseif ($numb == 2) {
+		}elseif ($num == 2) {
 			// code...
-			$sem = 'First semester';
+			$sem = 'Second semester';
 		}else{
 			$sem = '';
+		}
+		return $sem;
+	}
+}
+
+
+if ( ! function_exists('schoolyear_status'))
+{
+	/**
+	 * PUBLIC ASSETS URL
+	 *
+	 * Create a local URL based on your basepath.
+	 * Segments can be passed in as a string or an array, same as site_url
+	 * or a URL to a file can be passed in, e.g. to an image file.
+	 *
+	 * @param	string	$uri
+	 * @param	string	$protocol
+	 * @return	string
+	 */
+	function schoolyear_status($num = '', $protocol = null)
+	{
+		if ($num == 1) {
+			// code...
+			$sem = 'Present';
+		}elseif ($num == 2) {
+			// code...
+			$sem = 'Completed';
+		}else{
+			$sem = '';
+		}
+		return $sem;
+	}
+}
+
+if ( ! function_exists('student_status'))
+{
+	/**
+	 * PUBLIC ASSETS URL
+	 *
+	 * Create a local URL based on your basepath.
+	 * Segments can be passed in as a string or an array, same as site_url
+	 * or a URL to a file can be passed in, e.g. to an image file.
+	 *
+	 * @param	string	$uri
+	 * @param	string	$protocol
+	 * @return	string
+	 */
+	function student_status($num = '', $protocol = null)
+	{
+		if ($num == 1) {
+			// code...
+			$sem = 'Enrolled';
+		}elseif ($num == 2) {
+			// code...
+			$sem = 'Not enrolled';
+		}else{
+			$sem = '';
+		}
+		return $sem;
+	}
+}
+
+if ( ! function_exists('is_paid'))
+{
+	/**
+	 * PUBLIC ASSETS URL
+	 *
+	 * Create a local URL based on your basepath.
+	 * Segments can be passed in as a string or an array, same as site_url
+	 * or a URL to a file can be passed in, e.g. to an image file.
+	 *
+	 * @param	string	$uri
+	 * @param	string	$protocol
+	 * @return	string
+	 */
+	function is_paid($num = '', $protocol = null)
+	{
+		if ($num == 1) {
+			// code...
+			$sem = 'Paid';
+		}else{
+			$sem = 'Unpaid';
 		}
 		return $sem;
 	}

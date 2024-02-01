@@ -31,62 +31,70 @@ class Mevents extends CI_Model
 	{
 
 		// code...
+		$result = array();
 		if ($current == 'current') {
 			// code...
 
-		$this->db->where('event_startdate = ', date('Y-m-d'));//.'" and status = 0 ');
-		$this->db->or_where('event_enddate >= ', date('Y-m-d'));//.'" and status = 0 ');
-		$this->db->or_where('status',1);
-
-		$query=$this->db->get('events');
-
-		return $query->result();
-
-		}elseif ($current === 'canceled') {
-			// code...
-		
-		$this->db->where('event_startdate < ', date('Y-m-d'));//.'" and status = 0 ');
-		$this->db->where('event_enddate < ', date('Y-m-d'));//.'" and status = 0 ');
-		$this->db->where('status',0);
-		$this->db->or_where('status',3);
-		$query=$this->db->get('events');
-
-		return $query->result();
-
-		}elseif ($current === 'active') {
-			// code...
-
-		$this->db->where('event_startdate = ', date('Y-m-d'));//.'" and status = 0 ');
-		$this->db->where('event_enddate >= ', date('Y-m-d'));//.'" and status = 0 ');
 		$this->db->where('status',1);
 
 		$query=$this->db->get('events');
 
-		return $query->result();
+		$result = $query->result();
+
+		}elseif ($current === 'canceled') {
+			// code...
+		$this->db->where('status',3);
+		$query=$this->db->get('events');
+
+		$result = $query->result();
+
+		}elseif ($current === 'active') {
+			// code...
+		$this->db->where('status',1);
+
+		$query=$this->db->get('events');
+
+		$result = $query->result();
 
 		}
 		elseif ($current === 'incoming') {
 			// code...
 
 		$this->db->where('status',0);
-
-		$this->db->where('event_startdate >=', date('Y-m-d'));//.'" and status = 0 ');
-		$this->db->where('event_enddate >= ', date('Y-m-d'));//.'" and status = 0 ');
 		$query=$this->db->get('events');
 
-		return $query->result();
+		$result = $query->result();
 
 		}
 
 		elseif ($current === 'completed') {
 			// code...
-		return $this->db->order_by('event_startdate','ASC')->get_where('events',array('status'=>2))->result();
+		$result = $this->db->order_by('event_startdate','ASC')->get_where('events',array('status'=>2))->result();
 
 		}
 		else{
-		return $this->db->order_by('event_startdate','ASC')->get('events')->result();
+		$result = $this->db->order_by('event_startdate','ASC')->get('events')->result();
 
 		}
+		if (!empty($result)) {
+			// code...
+			foreach ($result as $key => $value) {
+				// code...
+				$courses = json_decode($value->attendees_course);
+				$c =  array();
+				foreach ($courses as $a => $b) {
+					// code...
+					$info_course = $this->db->get_where('course',array('id'=>$b))->row(0);
+					foreach (json_decode($value->attendees_year) as $i => $v) {
+						// code...
+					$c[] = $info_course->course_sub_title.' '.$v;
+
+					}
+				}
+				$result[$key]->courses = $c;
+			}
+		}
+		return $result;
 	}
 	public function like($data)
 	{
@@ -103,13 +111,148 @@ class Mevents extends CI_Model
 	public function info($id=0)
 	{
 		// code...
-		return $this->db->get_where('events',array('id'=>$id))->row(0);
+		$row = null;
+		if($row = $this->db->get_where('events',array('id'=>$id))->row(0)){
+
+				$courses = json_decode($row->attendees_course);
+				$c =  array();
+				foreach ($courses as $a => $b) {
+					// code...
+					$info_course = $this->db->get_where('course',array('id'=>$b))->row(0);
+					foreach (json_decode($row->attendees_year) as $i => $v) {
+						// code...
+					$c[] = $info_course->course_sub_title.' '.$v;
+
+					}
+				}
+				$row->courses = $c;
+		}
+				return $row;
 	}
 	public function get_currentevent()
 	{
 		// code...
 		return $this->db->limit(1)->get_where('events',array('status'=>1))->row(0);
 	}
+	public function list_absents($event_id=0,$year_id=0,$semester=0)
+	{
+		// code...
+		/*
+		$sql = sprintf("SELECT * FROM `v_events_course` where v_events_course.event_id = %u and v_events_course.student_id NOT IN (SELECT events_attendance.student_id FROM events_attendance WHERE events_attendance.event_id = %u);",$event_id,$event_id);
+		$query = $this->db->query($sql);
+		return $query->result();
+		*/
+
+		$students = $this->db->get_where('course_students',array('status'=>1,'semester'=>$semester,'year_id'=>$year_id))->result();
+		//$attendace = $this->db->get_where('events_attendance',array('event_id'=>$event_id))->result();
+		$data =  array();
+		foreach ($students as $key => $value) {
+			// code...
+			if ($this->check_events_attendees($value->course_id,$value->grade,$event_id)) {
+				// code...
+				if (!$this->db->get_where('events_attendance',array('event_id'=>$event_id,'student_id'=>$value->student_id))->result()) {
+					// code...
+				$data[] = $value;
+
+				}
+			}
+		}
+		return $data;
+	}
+
+	public function set_absent_penalty($data='')
+	{
+		// code...
+		return $this->db->insert('events_absent',$data);
+	}
+	public function list_late($event_id=0)
+	{
+		// code...
+		$sql = sprintf("SELECT * FROM `events_attendance` WHERE penalty_late = 1 and event_id = %u GROUP by event_id,student_id;",$event_id);
+		$query = $this->db->query($sql);
+		return $query->result();
+
+	}
+
+	public function set_late_penalty($data='')
+	{
+		// code...
+		return $this->db->insert('events_late',$data);
+	}
+	public function pay_late($data='')
+	{
+		// code...
+		$this->db->where('event_id',$data['event_id']);
+		$this->db->where('student_id',$data['student_id']);
+		return $this->db->update('events_late',array('payment_status'=>1));
+	}
+
+	public function pay_absent($data='')
+	{
+		// code...
+		$this->db->where('event_id',$data['event_id']);
+		$this->db->where('student_id',$data['student_id']);
+		return $this->db->update('events_absent',array('payment_status'=>1));
+	}
+
+
+	public function check_events_attendees($course_id=0,$grade = 0,$event_id=0)
+	{
+		// code...
+		$sql = sprintf("SELECT * FROM  events where  JSON_CONTAINS(events.attendees_course, %u,'$') AND JSON_CONTAINS(events.attendees_year, %u,'$') AND events.id = %u;",$course_id,$grade,$event_id);
+		$query = $this->db->query($sql);
+		return $query->result();
+	}
+	public function allowed_students($course_id=0,$grade = 0)
+	{
+		// code...
+		$sql = sprintf("SELECT * FROM course_students WHERE JSON_CONTAINS((SELECT events.attendees_course FROM events WHERE course_id = %u LIMIT 1), course_id) AND  JSON_CONTAINS((SELECT events.attendees_year FROM events WHERE grade = %u LIMIT 1), grade);",$course_id,$grade);
+		$query = $this->db->query($sql);
+		return $query->result();
+	}
+	public function getbystudentid($student_id='')
+	{
+		// code...
+		//$sql = sprintf("SELECT * FROM `events_late` WHERE student_id = '%s';",$student_id);
+		
+		$query = $this->db->get_where('events_late',array('student_id'=>$student_id));
+		$data = array();
+		$i=0;
+		if($result =  $query->result()){
+			foreach ($result as $key => $value) {
+				// code...
+				$info = $this->info($value->event_id);
+				$d = (object) array(
+					'event_title'=>$info->event_title,
+					'no_days'=>$info->no_days,
+					'penalty'=>$value->penalty,
+					'payment_status'=>$value->payment_status,
+					);
+				$data[] = $d;
+
+			}
+		}
+		//$sql2 = sprintf("SELECT * FROM `events_absent` WHERE student_id = '%s';",$student_id);
+		$query2 = $this->db->get_where('events_absent',array('student_id'=>$student_id));
+		//$query2 = $this->db->query($sql2);
+		
+		if($result2 =  $query2->result()){
+			foreach ($result2 as $key => $value) {
+				// code...
+				$info = $this->info($value->event_id);
+				$d = (object) array(
+					'event_title'=>$info->event_title,
+					'no_days'=>$info->no_days,
+					'penalty'=>$value->penalty,
+					'payment_status'=>$value->payment_status,
+					);
+				$data[] = $d;
+
+			}
+		}
+		return $data;
+	}
+
 }
 
  ?>

@@ -19,9 +19,49 @@ $(function(){
                 }
             })
 	})
-//})
+//table filter
+var table =  $('table').DataTable();
 
-//$(function(){
+    $('#select-year-id').on('change',function(){
+        $('#select-course-id').trigger('change');
+    });
+    $('#select-course-id').on('change',function(){
+
+        var formdata = {};
+            formdata.course_id = $(this).val();
+            formdata.year_id = $('#select-year-id').val();
+            $('table').draw_table(formdata);
+
+    })
+    $('input[name="searchstring"').on('keyup',function(){
+
+      table.search($(this).val()).draw() ;
+    })
+
+
+
+    $.fn.draw_table = function(formdata){
+            $(this).DataTable({
+            ajax:{
+                url:'<?=current_url()?>',
+                type:'POST',
+                data:formdata
+            },
+            columns:[
+                        {data:'student_id'},
+                        {data:'student_name'},
+                        {data:'course'},
+                        {data:'amount_pay'},
+                        {data:'date_of_payment'},
+                        {data:'semester'}
+            ],
+            destroy:true
+                });
+
+    }
+
+
+//scanner
 var resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
 
@@ -80,21 +120,72 @@ function onScanSuccess(decodedText, decodedResult) {
 
                         var table = $('table#table-balance-sheet tbody');
                         $(table).html('')
+                            var count =1;
+
                         $.each(response.data.utang,function (i,d) {
                             // body...
-                            var count =1;
                             $(table).append(
-                                $('<tr/>').append(
-                                    $('<td/>').text(count++)
+                                $('<tr/>').addClass('tr-'+count).append(
+                                    $('<td/>').text(count)
                                     ).append(
                                     $('<td/>').text(d.event_title)
                                     ).append(
-                                    $('<td/>').text(d.late_fee)
+                                    $('<td/>').text(d.bayarin)
                                     ).append(
-                                    $('<td/>').text()
+                                    $('<td/>').append(
+                                        $('<button/>')
+                                            .addClass('btn btn-sm btn-outline-success btn-pay')
+                                            .data('event_id',d.event_id)
+                                            .data('student_id',d.student_id)
+                                            .data('count',count)
+                                            .data('type',d.type)
+                                            .text('Pay')
+                                        )
                                     )
                                 );
+                            count++;
 
+                        })
+                        $('.btn-pay').on('click',function(){
+                            var student_id = $(this).data('student_id')
+                            var event_id = $(this).data('event_id')
+                            var counter = $(this).data('count')
+                            var type = $(this).data('type')
+                          //console.log(student_id+' - '+event_id);
+                            $('#pay_event_id').val(event_id)
+                            $('#pay_student_id').val(student_id)
+                            $('#modal-pay').modal('show')
+                            $('#form-pay').on('submit',function(e){
+                                e.preventDefault();
+                                let formdata = $(this).serializeObject();
+                                formdata.type = type;
+                                $.ajax({
+                                    url:'<?=site_url('collections/pay')?>',
+                                    method:'post',
+                                    dataType:'json',
+                                    data:formdata,
+                                    beforeSend:function(){
+                                        $('#btn-paid').addClass('disabled').prop('disabled',true);
+                                    },
+                                    success:function(response){
+                                        console.log(response)
+
+                                        notify(response)
+                                        if (response.status == true) {
+                                            $('#modal-pay').modal('hide')
+                                            $('#btn-paid').removeClass('disabled').removeAttr('disabled');
+                                            $('.tr-'+counter).remove();
+                                            console.log(counter)
+                                        }else{
+                                            $('#btn-paid').removeClass('disabled').removeAttr('disabled');
+
+                                        }
+                                    },
+                                    error:function(i,e){
+                                        console.log(i.responseText)
+                                    }
+                                })
+                            })
 
                         })
                         /**/
@@ -130,3 +221,4 @@ $('#start-scanner').on('click',function (e) {
 
 })
  
+<?php include_once('chart.js.php'); ?>

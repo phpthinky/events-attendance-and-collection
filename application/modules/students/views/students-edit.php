@@ -23,7 +23,7 @@
                             
                             <div class="col-xs-12 col-md-2"><input type="text" name="ext" value="<?=$info->ext?>" class="form-control" placeholder="Extension: Jr." width="50px"></div>
 
-                            <div class="col-xs-12 col-md-1">
+                            <div class="col-xs-12 col-md-1 d-none">
                               <button class="btn btn-outline-success btn-sm" id="btn-check-student-name" type="button">Check</button>
 
                             </div>
@@ -35,7 +35,11 @@
                       </div>
 
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-2">
+                          
+                        </div>
+
+                        <div class="col-md-10">
                           <ul class="list-group d-none" id="add-student-list-group">
                             <li class="list-group-item"><a href="#" class="nav-link">list of name will display here...</a>  </li>
                           </ul>
@@ -46,6 +50,31 @@
 
                     <div id="add-other-info" class="">
 
+                      <div class="form-group row">
+                        <label for="barangay" class="col-sm-12 col-md-2 col-form-label">Address</label>
+                        <div class="col-sm-12 col-md-10">
+                         <input class="form-control" placeholder="Residential address" name="address" id="address" value="<?=$info->address1?>" required>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+
+                         <label for="province" class="col-sm-12 col-md-2 col-form-label">Contact Number</label>
+                          
+                          <div class="col-sm-12 col-md-4">
+                         <input class="form-control" placeholder="Contact Number" name="contact_no" id="contact_no" value="<?=$info->contact_no?>">
+                        </div>
+                      </div>
+
+                      <div class="form-group row d-none">
+
+                         <label for="province" class="col-sm-12 col-md-2 col-form-label">Email (optional)</label>
+                          
+                          <div class="col-xs-12 col-md-4">
+                         <input class="form-control" placeholder="Email" name="email" id="email">
+                        </div>
+                      </div>
+<hr>
+<label>Education Details</label>
                       <div class="form-group row">
                         <label for="age" class="col-sm-12 col-md-2 col-form-label">Course</label>
                         <div class="col-sm-12 col-md-10">
@@ -72,19 +101,6 @@
                           
                            <div class="row">
                           
-                            <div class="col-xs-12 col-md-4">
-
-
-                          <select class="form-control" name="year" id="year" required>
-                            <option value="1" <?php if ($info->year == 1): ?>
-                                  selected
-                                <?php endif ?>>First semester</option>
-                            <option value="2" <?php if ($info->year == 2): ?>
-                                  selected
-                                <?php endif ?>>Second semester</option>
-                          </select>
-
-                        </div>
                             <div class="col-xs-12 col-md-4">
 
                           <select class="form-control" name="grade" id="grade" required>
@@ -146,36 +162,47 @@
 
                       </div>
 
-
-
                       <div class="form-group row">
-                        <label for="barangay" class="col-sm-12 col-md-2 col-form-label">Address</label>
-                        <div class="col-sm-12 col-md-10">
-                         <input class="form-control" placeholder="Residential address" name="address" id="address" value="<?=$info->address1?>" required>
-                        </div>
-                      </div>
+                         <label for="province" class="col-sm-12 col-md-2 col-form-label">Semester</label>
 
-                      
-                      <hr>
- <span>Contact Details</span>
+                            <div class="col-xs-12 col-md-10">
+
+                              <div class="row">
+                                <div class="col-md-4">
+                          <select class="form-control" name="semester" id="semester" required>
+                            <option value="1" <?php if ($info->semester == 1): ?>
+                                  selected
+                                <?php endif ?>>First semester</option>
+                            <option value="2" <?php if ($info->semester == 2): ?>
+                                  selected
+                                <?php endif ?>>Second semester</option>
+                          </select>
+
+                        </div>
+                        </div>
+                        </div>
+                        </div>
                       <div class="form-group row">
+                         <label for="province" class="col-sm-12 col-md-2 col-form-label">Enrollment Status</label>
 
-                         <label for="province" class="col-sm-12 col-md-2 col-form-label">Contact Number</label>
-                          
-                          <div class="col-sm-12 col-md-10">
-                         <input class="form-control" placeholder="Contact Number" name="contact_no" id="contact_no" value="<?=$info->contact_no?>">
+                            <div class="col-xs-12 col-md-10">
+
+                              <div class="row">
+                                <div class="col-md-4">
+                          <select class="form-control" name="status" id="status" required>
+                            <option value="0">None</option>
+                            <option value="1" <?php if ($info->status == 1): ?>
+                              selected
+                            <?php endif ?> >Enrolled</option>
+                            <option value="2" <?php if ($info->status == 2): ?>
+                              selected
+                            <?php endif ?> >Not enrolled</option>
+                          </select>
+
                         </div>
-                      </div>
-
-                      <div class="form-group row d-none">
-
-                         <label for="province" class="col-sm-12 col-md-2 col-form-label">Email (optional)</label>
-                          
-                          <div class="col-sm-12 col-md-10">
-                         <input class="form-control" placeholder="Email" name="email" id="email">
                         </div>
-                      </div>
-
+                        </div>
+                    </div>
                       <div class="form-group row">
 
                          <label for="province" class="col-sm-12 col-md-2 col-form-label">&nbsp;</label>

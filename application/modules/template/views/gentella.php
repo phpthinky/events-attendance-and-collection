@@ -8,8 +8,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+<link rel="apple-touch-icon" sizes="57x57" href="<?=assets_url()?>img/icon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="<?=assets_url()?>img/icon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="<?=assets_url()?>img/icon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="<?=assets_url()?>img/icon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="<?=assets_url()?>img/icon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="<?=assets_url()?>img/icon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="<?=assets_url()?>img/icon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="<?=assets_url()?>img/icon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="<?=assets_url()?>img/icon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="<?=assets_url()?>img/icon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="<?=assets_url()?>img/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="<?=assets_url()?>img/icon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="<?=assets_url()?>img/icon/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
 
-    <title>SOE!</title>
+    <title>Student Organization Collections and Events Monitoring Sytem</title>
 
     <!-- Bootstrap -->
     <link href="<?=base_url()?>/template/gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -52,7 +68,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>SOE!</span></a>
+              <a href="index.html" class="site_title"><img src="<?=base_url('assets/img/org-logo-sidebar.png')?>"></a>
             </div>
 
             <div class="clearfix"></div>
@@ -97,7 +113,7 @@
                     <ul class="nav child_menu">
                       
                       <li><a href="<?=site_url('collections/scanner')?>">Scanner</a></li>
-                      <li><a href="<?=site_url('collections')?>">View</a></li>
+                      <li><a href="<?=site_url('collections')?>">Chart</a></li>
                       <li><a href="<?=site_url('collections/first')?>">First Semester</a></li>
                       <li><a href="<?=site_url('collections/second')?>">Second Semester</a></li>
 
@@ -106,18 +122,29 @@
                   <li><a><i class="fa fa-table"></i> Events <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="<?=site_url('events')?>">List all events</a></li>
+                      <?php if ($this->aauth->is_allowed(1)): ?>
+                        
                       <li><a href="<?=site_url('events/create')?>">Create event</a></li>
 
+                      <?php endif ?>
                     </ul>
                   </li>
+                  <?php if ($this->aauth->is_admin()): ?>
+                    
+
                   <li><a><i class="fa fa-clone"></i>Settings <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="<?=site_url('course')?>">Course settings</a></li>
                       <li><a href="<?=site_url('collections/settings')?>">Collection settings</a></li>
                       <li><a href="<?=site_url('settings/semester')?>">Semester settings</a></li>
+                      <li><a href="<?=site_url('settings/schoolyear')?>">School year settings</a></li>
                       <li><a href="<?=site_url('users')?>">Account settings</a></li>
+                      <li><a href="<?=site_url('settings/backup')?>">Reset system settings</a></li>
+                        
                     </ul>
                   </li>
+
+                  <?php endif ?>
                 </ul>
               </div>
               <div class="menu_section">
@@ -183,14 +210,18 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
+
+          <div class="print-header">
+            <div class="row">Student Organization Collections of Events and Monitring System</div>
+          </div>
           <?php $this->load->view($content); ?>
         </div>
         <!-- /page content -->
 
         <!-- footer content -->
         <footer>
-          <div class="pull-right">
-            Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+          <div class="pull-right d-none">
+            Student Organization Collections of Events and Monitring System <a href="https://phpthinky.net"></a>
           </div>
           <div class="clearfix"></div>
         </footer>
@@ -241,11 +272,11 @@
 <?php elseif(isset($hasTable)): ?>
    
   
-<?php elseif(isset($hasScanner)): ?>
-    <script type="text/javascript" src="<?=base_url('assets')?>/plugins/html5-qrcode/html5-qrcode.min.js"></script>
 
     
     <?php endif ?>    
+    <script type="text/javascript" src="<?=base_url('assets')?>/plugins/html5-qrcode/html5-qrcode.min.js"></script>
+
   <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <!-- jQuery Smart Wizard -->
@@ -256,7 +287,7 @@
     <script src="<?=base_url()?>/template/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="<?=base_url()?>/template/gentelella/build/js/custom.min.js"></script>
+    <script src="<?=base_url()?>/template/gentelella/build/js/custom.js"></script>
     <!-- -->
     <script type="text/javascript">
      <?php include_once('js.php') ?>

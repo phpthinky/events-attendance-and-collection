@@ -53,7 +53,19 @@ $(function(){
 		})
 
 	})
+	$('#event_startdate').on('change',function(){
+		var date = $(this).val();
+		var days = $('input[name="no_days"]').val();
+		var ndate = addDays(date,(days-1));
+		//alert(ndate);
 
+		$('#event_enddate').text(tomdy(ndate))
+	})
+
+	$('#e_event_startdate').on('change',function(){
+		var date = $(this).val();
+		$('#event_enddate').text(tomdy(date))
+	})
 	$('select#attendees_course').on('change',function(){
 		var text = [];
 		$('select#attendees_course option:selected').each(function(){

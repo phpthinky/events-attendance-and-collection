@@ -20,12 +20,12 @@ class Mattendance extends CI_Model
 	{
 		// code...
 		$this->db->where('id',$data->id);
-		$this->db->update('events_attendance',$data);
+		return $this->db->update('events_attendance',$data);
 	}
 	public function find($data='')
 	{
 		// code...
-		return $this->db->get_where('events_attendance',$data)->result();
+		return $this->db->get_where('events_attendance',$data)->row(0);
 	}
 	public function list($data='')
 	{
@@ -72,6 +72,35 @@ class Mattendance extends CI_Model
 
 
 	}
+
+	public function get_list($event_id=0,$date_of_event='')
+	{
+		// code...
+		//return $this->db->order_by('timein','DESC')->get_where('events_attendance',array('event_id'=>$event_id))->result();
+			$this->db
+			->select('events_attendance.*,concat(fName," ",mName," ",lName) as student_name')
+			->from('events_attendance')
+			->join('students','students.code = events_attendance.student_id')
+			->where('date_of_event',$date_of_event)
+			->where('event_id',$event_id);
+			$query = $this->db->get();
+			return $query->result();
+
+		return null;
+
+
+	}
+	public function get_absent($event_id=0,$course_id = 0)
+	{
+		// code...
+		$sql = sprintf("SELECT * FROM `v_events_course` where v_events_course.event_id = %u and v_events_course.student_id NOT IN (SELECT events_attendance.student_id FROM events_attendance WHERE events_attendance.event_id = events_attendance.event_id);",$event_id);
+		$query = $this->db->query($sql);
+		return $query->result();
+
+	}
+
+
+
 }
 
  ?>

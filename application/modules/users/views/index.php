@@ -95,15 +95,14 @@
                        						<td></td>
                        						<td class="row-username-<?=$value->id?>"><?=$value->username?></td>
                        						<td class="row-email-<?=$value->id?>"><?=$value->email?></td>
-                       						<td><?php $groups = $this->aauth->get_user_groups($value->id);
-                       						$group = array();
-                       						foreach ($groups as $k => $v) {
+                       						<td><?php $group = array();
+                       						foreach ($value->permissions as $k => $v) {
                        							// code...
                        							$group[]=$v->name;
                        						}
                        						echo implode(', ', $group);
                        						 ?></td>
-                       						 <td><button class="btn btn-sm btn-default btn-modify-user" data-id="<?=$value->id?>"><i class="fa fa-edit" ></i> Modify</button> <button class="btn btn-sm btn-outline-danger btn-trash-user" data-id="<?=$value->id?>"><i class="fa fa-trash"></i>Delete</button></td>
+                       						 <td><button class="btn btn-sm btn-default btn-modify-user" data-id="<?=$value->id?>"  data-perms="<?=$value->permissions[0]->id?>"><i class="fa fa-edit" ></i> Modify</button> <button class="btn btn-sm btn-outline-danger btn-trash-user" data-id="<?=$value->id?>"><i class="fa fa-trash"></i>Delete</button></td>
                        					</tr>
                        					<?php endif ?>
                        				<?php endforeach ?>
@@ -137,22 +136,35 @@
       <!-- Modal body -->
       <div class="modal-body">
        	
-       	<form id="form-add-userr" action="javascript:void(0)">
+       	<form id="form-add-userr" action="javascript:void(0)" autocomplete="off">
        		<input type="hidden" name="action" value="add-user">
        		<div class="row">
        		<label class="col-md-3">Username</label>
-       		<div class="col-md-9"><input type="text" name="username" class="form-control"></div>
+       		<div class="col-md-9"><input type="text" name="username" class="form-control" required></div>
        	</div>
 
        	<div class="row">
        		<label class="col-md-3">Email</label>
-       		<div class="col-md-9"><input type="email" name="email" class="form-control"></div>
+       		<div class="col-md-9"><input type="email" name="email" class="form-control" required></div>
        	</div>
        	<div class="row">
        		<label class="col-md-3">Password</label>
-       		<div class="col-md-9"><input type="password" name="passcode" class="form-control"></div>
+       		<div class="col-md-9"><input type="password" name="passcode" class="form-control"  autocomplete="new-password" required></div>
        	</div>
 
+       	<div class="row">
+       		<label class="col-md-3">User type</label>
+       		<div class="col-md-9">
+       			<select name="user_permission" required class="form-control">
+       				<option value="">Select user type</option>
+       				<?php if (!empty($permissions)): ?>
+       					<?php foreach ($permissions as $key => $value): ?>
+       						<option value="<?=$value->id?>"><?=$value->name?></option>
+       					<?php endforeach ?>
+       				<?php endif ?>
+       			</select>
+       		</div>
+       	</div>
        	<div class="row">
        		<label class="col-md-3">&nbsp;</label>
        		<div class="col-md-9"><hr>
@@ -180,30 +192,43 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Add user</h4>
+        <h4 class="modal-title">Edit user</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Modal body -->
       <div class="modal-body">
        	
-       	<form id="form-edit-userr" action="javascript:void(0)">
+       	<form id="form-edit-userr" action="javascript:void(0)" autocomplete="off">
        		<input type="hidden" name="user_id" value="0">
-       		<input type="hidden" name="action" value="add-user">
+       		<input type="hidden" name="action" value="edit-user">
        		<div class="row">
        		<label class="col-md-3">Username</label>
-       		<div class="col-md-9"><input type="text" name="username" class="form-control"></div>
+       		<div class="col-md-9"><input type="text" name="username" class="form-control" required></div>
        	</div>
 
        	<div class="row">
        		<label class="col-md-3">Email</label>
-       		<div class="col-md-9"><input type="email" name="email" class="form-control"></div>
+       		<div class="col-md-9"><input type="email" name="email" class="form-control" required></div>
        	</div>
        	<div class="row">
        		<label class="col-md-3">Password</label>
-       		<div class="col-md-9"><input type="password" name="passcode" class="form-control"></div>
+       		<div class="col-md-9"><input type="password" name="passcode" class="form-control" autocomplete="new-password" required></div>
        	</div>
 
+       	<div class="row">
+       		<label class="col-md-3">User type</label>
+       		<div class="col-md-9">
+       			<select name="user_permission" required class="form-control">
+       				<option value="">Select user type</option>
+       				<?php if (!empty($permissions)): ?>
+       					<?php foreach ($permissions as $key => $value): ?>
+       						<option value="<?=$value->id?>"><?=$value->name?></option>
+       					<?php endforeach ?>
+       				<?php endif ?>
+       			</select>
+       		</div>
+       	</div>
        	<div class="row">
        		<label class="col-md-3">&nbsp;</label>
        		<div class="col-md-9"><hr>

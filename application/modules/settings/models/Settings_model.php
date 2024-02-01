@@ -17,6 +17,13 @@
     return $this->db->limit(1)->get('settings_semester')->row(0);
   }
 
+  public function getcurrentsem($value='')
+  {
+    // code...
+    $row =  $this->db->limit(1)->get('settings_semester')->row(0);
+    return $row->current_semester;
+  }
+
   public function setsemestersettings($data)
   {
     // code...
@@ -26,6 +33,56 @@
     }
     return $this->db->insert('settings_semester',$data);
   }
+
+
+  public function addschoolyear($data)
+  {
+    if ($data['status'] ==  1) {
+      // code...
+      $this->db->where('status',1);
+      $this->db->update('settings_schoolyear',array('status'=>2));
+    }
+    return $this->db->insert('settings_schoolyear',$data);
+  }
+
+  public function editschoolyear($data)
+  {
+
+    if ($data['status'] ==  1) {
+      // code...
+      $this->db->where('status',1);
+      $this->db->update('settings_schoolyear',array('status'=>2));
+    }
+
+    $this->db->where('id',$data['id']);
+    return $this->db->update('settings_schoolyear',$data);
+  }
+
+  public function trashschoolyear($year_id=0)
+  {
+
+      // code...
+      $this->db->where('id',$year_id);
+      $this->db->set('is_deleted',1);
+     return $this->db->update('settings_schoolyear');
+   
+  }
+
+  public function listschoolyear($status=0)
+  {
+    if (!empty($status)) {
+      // code...
+      $this->db->where('status',$status);
+    }
+    return $this->db->get_where('settings_schoolyear',array('is_deleted'=>null))->result();
+  }
+
+  public function get_current_sy($value='')
+  {
+    // code...
+    return $this->db->limit(1)->get_where('settings_schoolyear',array('status'=>1))->row(0);
+  }
+  
   public function system_info($data='')
   {
     // code...
@@ -40,14 +97,19 @@
   }
   public function reset_all($value='')
   {
-    $this->db->truncate('personaldetails');
+    $this->db->truncate('course');
+    $this->db->truncate('students');
+    $this->db->truncate('course_students');
+    $this->db->truncate('events');
+  $this->db->truncate('events_absent');
+  $this->db->truncate('events_collection');
+  $this->db->truncate('events_late');
+  $this->db->truncate('aauth_perms');
     $this->db->delete('aauth_users',array('id <>'=>1));
     $this->db->delete('aauth_user_to_group',array('user_id <>'=>1));
     $sql = "ALTER TABLE `aauth_users` AUTO_INCREMENT = 2";
     $this->db->query($sql);
     
-    $sql2 = "ALTER TABLE `eworkers` AUTO_INCREMENT = 2";
-    $this->db->query($sql2);
   }
 
  } ?>

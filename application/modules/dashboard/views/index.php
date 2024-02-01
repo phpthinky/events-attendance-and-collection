@@ -9,7 +9,7 @@
 					<label><i class="fa fa-users"></i> Enrollment count</label>
 					<hr>
 					<center>
-						<h1>0</h1>
+						<h1><?=$total_students?></h1>
 					<span>Students</span></center>
 				</div>
 			</div>
@@ -53,7 +53,17 @@
 
 					<label><i class="fa fa-qrcode"></i></label>
 					<hr>
-					<center><a class="btn btn-block btn-outline-primary" href="<?=site_url('collections/scanner')?>">SCAN NOW</a></center>
+					<center>
+						<?php if ($this->aauth->is_allowed(1)): ?>
+						<a class="btn btn-block btn-outline-primary" href="<?=site_url('attendance')?>">SCAN NOW</a>
+							
+						<?php endif ?>
+
+						<?php if ($this->aauth->is_allowed(2)): ?>
+						<a class="btn btn-block btn-outline-primary" href="<?=site_url('collections/scanner')?>">SCAN NOW</a>
+							
+						<?php endif ?>
+					</center>
 					<span>&nbsp;</span>
 				</div>
 			</div>

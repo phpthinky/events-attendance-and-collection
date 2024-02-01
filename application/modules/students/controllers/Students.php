@@ -20,21 +20,41 @@ class Students extends MY_Controller
 	{
 		parent::__construct();
 
+		if (!$this->aauth->is_loggedin()) {
+			// code...
+			redirect('login');
+		}
 		$this->load->model('students/mstudents');
 		$this->load->model('events/mevents');
 		$this->load->model('attendance/mattendance');
 		$this->load->model('collections/mcollections');
 		$this->load->model('course/mcourse');
+		$this->load->model('settings/settings_model','msettings');
 
 	}
 	public function index($value='')
 	{
 		// code...
 		$data = new stdClass();
+
+
+      $listschoolyear =array();
+    if($listschoolyear = $this->msettings->listschoolyear()){
+      foreach ($listschoolyear as $key => $value) {
+        // code...
+        $listschoolyear[$key]->sy_status = schoolyear_status($value->status);
+        $listschoolyear[$key]->sy_start_year = monthyear($value->start_year);
+        $listschoolyear[$key]->sy_end_year =  monthyear($value->end_year);
+      }
+    }
+    $data->listschoolyear = $listschoolyear;
+
 		$data->list_students = $this->mstudents->listbystudentsbypenalty();
 		$data->courses = $this->mcourse->list();
 		$data->id_number = 'ID'.date('Y').formatid($this->mstudents->last_id()+1);
 		$data->hasTable = true;
+		$data->hasScanner = true;
+
 		$data->content = 'students/index';
 		$this->template->load($this->theme,$data);
 	}
@@ -42,14 +62,30 @@ class Students extends MY_Controller
 	{
 		// code...
 		$data = new stdClass();
+
+
+      $listschoolyear =array();
+    if($listschoolyear = $this->msettings->listschoolyear()){
+      foreach ($listschoolyear as $key => $value) {
+        // code...
+        $listschoolyear[$key]->sy_status = schoolyear_status($value->status);
+        $listschoolyear[$key]->sy_start_year = monthyear($value->start_year);
+        $listschoolyear[$key]->sy_end_year =  monthyear($value->end_year);
+      }
+    }
+    $data->listschoolyear = $listschoolyear;
+
 		$course_id = $this->mcourse->get_id($course_sub_title);
-		//$data->list_students = $this->mstudents->listbycourse($course_id);
-		$data->list_students = $this->mattendance->list();
+		$data->list_students = $this->mstudents->listbycourse($course_id);
+		//var_dump($data);
+		//exit;
+		//$data->list_students = $this->mattendance->list();
 		$data->id_number = 'ID'.date('Y').formatid($this->mstudents->last_id()+1);
 		
 		$data->course_id = $course_id;
 		$data->course_title = strtoupper($course_sub_title);	
 		$data->hasTable = true;
+		$data->hasScanner = true;
 		$data->courses = $this->mcourse->list();
 
 		$data->content = 'students/course';
@@ -96,10 +132,11 @@ class Students extends MY_Controller
 
 				$student_course =  new stdClass();
 				$student_course->course_id = $this->input->post('course');
-				$student_course->year = $this->input->post('year');
 				$student_course->grade = $this->input->post('grade');
 				$student_course->section = $this->input->post('section');
-				$student_course->status = 1;
+				$student_course->status = $this->input->post('status');
+				$student_course->year_id = $this->input->post('year_id');
+				$student_course->semester = $this->input->post('semester');
 
 			$student_info = new stdClass();
 			$student_info->fName = $this->input->post('fName');
@@ -110,6 +147,11 @@ class Students extends MY_Controller
 			$student_info->address1 = $this->input->post('address');
 			$student_info->code = $this->input->post('student_id');
 
+			if ($this->mstudents->check_idnumber($this->input->post('student_id'))) {
+				// code...
+				echo json_encode(array('status'=>false,'msg'=>'Failed! ID is already taken!'));
+				exit();
+			}
 			$course_title = $this->mcourse->get_coursesubtitle($student_course->course_id);
 
 			$student_qinfo = array(
@@ -124,11 +166,16 @@ class Students extends MY_Controller
 
 				$student_course->student_id = $student_info->code;
 				$this->mstudents->save_course($student_course);
+				echo json_encode(array('status'=>true,'msg'=>'Student successfull added.'));
+
+
 			}else{
 
 
 				echo json_encode(array('status'=>false,'msg'=>'Student already exist. Used enrol student instead.'));
 			}
+		}else{
+			echo json_encode(noinput());
 		}
 	}
 
@@ -144,8 +191,12 @@ class Students extends MY_Controller
 
 					$data->info->course_id = $course->course_id;
 					$data->info->year = $course->year;
+					$data->info->semester = $course->semester;
 					$data->info->section = $course->section;
 					$data->info->grade = $course->grade;
+					$data->info->status = $course->status;
+					$data->info->year_id = $course->year_id;
+
 		}
 		//exit();
 		$data->courses = $this->mcourse->list();
@@ -159,14 +210,6 @@ class Students extends MY_Controller
 		if ($this->input->post()) {
 			// code...
 
-				$student_course =  new stdClass();
-				$student_course->course_id = $this->input->post('course');
-				$student_course->year = $this->input->post('year');
-				$student_course->grade = $this->input->post('grade');
-				$student_course->section = $this->input->post('section');
-				$student_course->student_id = $this->input->post('student_id');
-				$student_course->status = 1;
-
 			$student_info = new stdClass();
 			$student_info->code = $this->input->post('student_id');
 			$student_info->fName = $this->input->post('fName');
@@ -175,27 +218,45 @@ class Students extends MY_Controller
 			$student_info->ext = $this->input->post('ext');
 			$student_info->contact_no = $this->input->post('contact_no');
 			$student_info->address1 = $this->input->post('address');
-			//$student_info->code = 'ID'.date('Y').formatid($this->mstudents->last_id()+1);
-
-			$course_title = $this->mcourse->get_coursesubtitle($student_course->course_id);
-
-			$student_qinfo = array(
-				'name'=>$student_info->fName.' '.$student_info->lName,
-				'course'=>$course_title.' '.$student_course->grade.'-'.$student_course->section
-				);
+			//$result1 = true;
+		$result1 = $this->mstudents->update_by_code($student_info);
 
 
-			if ($result_id = $this->mstudents->update($this->input->post('student_id'),$student_info)) {
+				$student_course =  new stdClass();
+				$student_course->course_id = $this->input->post('course');
+				$student_course->semester = $this->input->post('semester');
+				$student_course->grade = $this->input->post('grade');
+				$student_course->section = $this->input->post('section');
+				$student_course->student_id = $this->input->post('student_id');
+				$student_course->status = $this->input->post('status');
+		$result2  =  $this->mstudents->save_course($student_course);
+
+
+
 				// code...
 //			$this->toqrcode($student_info->code,json_encode($student_qinfo));
+			if ($result1 && $result2) {
+					// code...
+			
+			echo json_encode(array('status'=>true,'msg'=>'Student updated successfully.'));
 
-				$student_course->student_id = $$this->input->post('student_id');
-				$this->mstudents->save_course($student_course);
-			}else{
-
-
-				echo json_encode(array('status'=>false,'msg'=>'Student already exist. Used enrol student instead.'));
 			}
+
+			else{
+				if (!$result1) {
+					// code...
+					$msg = "Details error!";
+				}
+
+				if (!$result2) {
+					// code...
+					$msg = "Course error!";
+				}
+
+				echo json_encode(array('status'=>false,'msg'=>'Student details may not updated.Error: '.$msg));
+			}
+		}else{
+			echo json_encode(noinput());
 		}
 	}
 
@@ -219,6 +280,51 @@ class Students extends MY_Controller
 	//	$qr_code = "QR".$code;
 		$result->saveToFile(UPLOADPATH.$code.".png");
 		return;// $code;
+
+	}
+	public function info($id_number='')
+	{
+		// code...
+		$data = new stdClass();
+
+		$data->info = $this->mstudents->getbycode($id_number);
+		$data->events_penalty = $this->mevents->getbystudentid($id_number);
+
+		$data->content = 'students/info';
+		$this->template->load($this->theme,$data);
+	}
+
+	public function scanned($student_id='')
+	{
+		// code...
+		//echo json_encode($this->input->post());
+
+		if($info = $this->mstudents->getbycode($this->input->post('student_id'))){
+			echo json_encode(array('status'=>true,'msg'=>'Student found!','data'=>$info));
+		}else{
+			echo json_encode(array('status'=>false,'msg'=>'No student found.'));
+
+		}
+	}
+	public function quick_edit($value='')
+	{
+		// code...
+		$data = array(
+			'year_id'=>$this->input->post('year_id'),
+			'course_id'=>$this->input->post('course'),
+			'year'=>$this->input->post('year'),
+			'semester'=>$this->input->post('year'),
+			'grade'=>$this->input->post('grade'),
+			'section'=>$this->input->post('section'),
+			'status'=>$this->input->post('status'),
+		);
+		if($this->mstudents->quick_update($this->input->post('student_id'),$data)){
+
+			echo json_encode(array('status'=>true,'msg'=>'Successfully updated'));
+		}else{
+			echo json_encode(array('status'=>false,'msg'=>'No student found.'));
+
+		}
 
 	}
 

@@ -12,16 +12,63 @@
 			<div class="card-body">
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab-family">
-					<label class="text-title">list current events</label>
+					<label class="text-title">Collections</label>
+
+
+                              <div class="row">
+
+                                <div class="col-md-2">
+                                  
+                                  <label for="select-center-type">Course</label>
+                                  <select id="select-course-id" name="course_id" class="form-control">
+                                    <option value="0" selected>View All</option>
+                                     <?php if (!empty($list_courses)): ?>
+                                      <?php foreach ($list_courses as $key => $value): ?>
+                                        <option value="<?=$value->id?>"><?=$value->course_sub_title?></option>
+                                      <?php endforeach ?>
+                                    <?php endif ?>
+
+                                  </select>
+                                </div>
+                                <div class="col-md-2">
+                                  
+                                  <label for="select-barangay">School Year</label>
+                                  <select name="year_id" id="select-year-id" class="form-control">
+                                    <?php if (!empty($sy)): ?>
+                                      <?php foreach ($sy as $key => $value): ?>
+                                        <option value="<?=$value->id?>"><?=monthyear($value->start_year)?> - <?=monthyear($value->end_year)?></option>
+                                      <?php endforeach ?>
+                                    <?php endif ?>
+                                  </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <label for="searchstring">Searh here..</label>
+                                  <input type="search" id="searchstring-center" name="searchstring" placeholder="Search here..." class="form-control">
+                                </div>
+                                
+                                <div class="col-md-2">
+                                  <label for="filter-buttons"><span class="area-hidden">&nbsp;</span></label>
+                                  <div class="row" id="filter-buttons">
+                                    <div class="col-sm-2 col-xs-2 col-md-6 d-none">
+                                  <button type="button" class="btn btn-md btn-primary">Filter</button>
+                                      
+                                    </div>
+                                    <div class="col-sm-2 col-xs-2 col-md-6">
+                                  <a href="#" class="btn btn-md btn-success" id="btn-export-centers">Go</a>
+                                      
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
 						<div class="table-responsive">
 							<table class="table table-bordered">
             <thead>
               <tr>
-                <th></th>
                 <th>ID</th>
                 <th>Student Name</th>
                 <th>Course</th>
-                <th>Section</th>
                 <th>Amount Paid</th>
                 <th>Date Paid</th>
                 <th>Semester</th>
@@ -33,15 +80,13 @@
                           <?php foreach ($list_students as $key => $value): ?>
                             
                         <tr>
-                          <td><button class="btn btn-block btn-default"><i class="fa fa-qrcode"></i></button></td>
-                          <td><?=$value->code?></td>
-                          <td><?=$value->fName. ' '. $value->mName.' '.$value->lName.' '.$value->ext?></td>
+                          <td><?=$value->student_id?></td>
+                          <td><?=$value->student_name?></td>
 
-                          <td><?=$value->course_sub_title?></td>
-                          <td><?=$value->grade.'-'.$value->section?></td>
+                          <td><?=$value->course?></td>
                           <td><?=$value->amount_pay?></td>
                           <td><?=$value->date_of_payment?></td>
-                          <td><?=semester($value->year)?></td>
+                          <td><?=semester($value->semester)?></td>
                         </tr>
                         
                           <?php endforeach ?>

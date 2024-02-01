@@ -46,7 +46,7 @@
 												<?php if ($value->status == 2): ?>
 													<td></td>
 													<?php else: ?>
-														<td><a href="<?=site_url('attendance/start/'.$value->id)?>" class="btn btn-default btn-sm"><i class="fa fa-play"></i> Attendance</a> <a data-event_id="<?=$value->id?>" href="#" class="btn btn-default btn-sm btn-stop-event"><i class="fa fa-stop"></i> End event</a> <?php if ($value->status == 0): ?>
+														<td><a href="<?=site_url('attendance/start/'.$value->id)?>" class="btn btn-default btn-sm"><i class="fa fa-play"></i> Start</a> <a data-event_id="<?=$value->id?>" href="#" class="btn btn-default btn-sm btn-stop-event"><i class="fa fa-stop"></i> End event</a> <?php if ($value->status == 0): ?>
 													<a class="btn btn-default btn-sm" href="<?=site_url('events/edit/'.$value->id)?>" ><i class="fa fa-edit"></i> Modify</a>
 												<?php endif ?></td>
 												<?php endif ?>
@@ -88,7 +88,7 @@
 												<td><?=toMMdy($value->event_startdate) ." ".time_format($value->morning_timein)?></td>
 												<td><?=toMMdy($value->event_enddate)." ".time_format($value->afternoon_timeout)?></td>
 												<td><?=is_active($value->status)?></td>
-												<td><a href="<?=site_url('events/edit/'.$value->id)?>" class="btn btn-default btn-sm"><i class="fa fa-edit"></i> Modify</a></td>
+												<td><a href="#" class="btn btn-default btn-sm"><i class="fa fa-list"></i> Info</a>  <a href="<?=site_url('attendance/start/'.$value->id)?>" class="btn btn-default btn-sm"><i class="fa fa-play"></i> Start</a> <a href="<?=site_url('events/edit/'.$value->id)?>" class="btn btn-default btn-sm"><i class="fa fa-edit"></i> Modify</a></td>
 											</tr>
 										<?php endforeach ?>
 									<?php endif ?>

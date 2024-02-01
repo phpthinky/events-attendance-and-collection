@@ -20,7 +20,9 @@
 									<label class="col-md-12">Event start:  <b><?=toMMdy($event_info->event_startdate).' '.date('h:i a',strtotime($event_info->morning_timein))?></b></label>
 									<label class="col-md-12">Event end:  <b><?=toMMdy($event_info->event_enddate).' '.date('h:i a',strtotime($event_info->afternoon_timeout))?></b></label>
 
-									<label class="col-md-12">Day:  <b><?=getDays($event_info->event_timestart,date('Y-m-d'))+1?></b></label>
+									<label class="col-md-12">Day:  <b><?=$event_info->no_days?></b></label>
+
+									<label class="col-md-12">Attendee:  <b><?=implode(', ',$event_info->courses)?></b></label>
 									<?php endif ?>
 								</div>
 							</div>
@@ -39,7 +41,7 @@
 											
 										<div class="d-none">
 											<input type="hidden" name="event_id" value="<?=isset($event_info->id) ? $event_info->id : 0?>">
-											<input type="hidden" name="event_day" value="<?=getDays($event_info->event_timestart,date('Y-m-d'))+1?>">
+											<input type="hidden" name="event_day" value="<?=$event_info->no_days?>">
 											
 
 										</div>
@@ -59,7 +61,7 @@
 									<hr>
 									<?php if (!empty($event_info)): ?>
 										
-									<label class="col-md-12"><button id="start-scanner" class="btn btn-outline-primary">Start scanner</button></label>
+									<div class="col-md-12"><button id="start-scanner" class="btn btn-outline-primary">Start scanner</button> <button id="btn-stop-event" data-event_id="<?=$event_info->id?>" class="btn btn-outline-danger">End event</button></div>
 									<?php endif ?>
 								</div>
 

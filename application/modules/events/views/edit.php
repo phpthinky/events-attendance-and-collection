@@ -15,7 +15,7 @@
 				<div class="row form-group">
 					<label class="col-md-3" for="event_title">Event Start Date</label>
 					<div class="col-md-9">
-						<input class="form-control min-date" name="event_startdate" id="event_startdate" type="date" value="<?=isset($event_info->event_startdate) ? $event_info->event_startdate : date('Y-m-d')?>">
+						<input class="form-control min-date" name="event_startdate" id="e_event_startdate" type="date" value="<?=isset($event_info->event_startdate) ? $event_info->event_startdate : date('Y-m-d')?>">
 					</div>
 				</div>
 
@@ -23,10 +23,18 @@
 				<div class="row form-group">
 					<label class="col-md-3" for="event_title">Event End Date</label>
 					<div class="col-md-9">
-						<input class="form-control min-date" name="event_enddate" id="event_enddate" type="date" value="<?=isset($event_info->event_enddate) ? $event_info->event_enddate : date('Y-m-d')?>">
+						<span class="form-control" id="event_enddate"><?=isset($event_info->event_enddate) ? tomdy($event_info->event_enddate) : date('Y-m-d')?></span>
 					</div>
 				</div>
 
+
+
+				<div class="row form-group">
+					<label class="col-md-3" for="event_title">Day</label>
+					<div class="col-md-9">
+						<span class="form-control" id="no_days"><?=isset($event_info->no_days) ? $event_info->no_days : ''?></span>
+					</div>
+				</div>
 
 				<hr>
 				<label>Time in-out</label>
@@ -80,25 +88,6 @@
 					</div>
 				</div>
 
-				<div class="row form-group">
-					<label class="col-md-3" for="absent_penalty">Status</label>
-					<div class="col-md-9">
-						<select class="form-control" name="status">
-							<option value="0" <?php if ($event_info->status == 0): ?>
-								selected
-							<?php endif ?> >Inactive</option>
-							<option value="1" <?php if ($event_info->status == 1): ?>
-								selected
-							<?php endif ?> >Active</option>
-							<option value="2" <?php if ($event_info->status == 2): ?>
-								selected
-							<?php endif ?> >Completed</option>
-							<option value="3" <?php if ($event_info->status == 3): ?>
-								selected
-							<?php endif ?> >Canceled</option>
-						</select>
-					</div>
-				</div>
 
 				<hr>
 				<label>Select event attendees</label>
@@ -151,9 +140,33 @@
 					</div>
 					</div>
 				</div>
+<hr>
+
+				<div class="row form-group">
+					<label class="col-md-3" for="absent_penalty">Event Status</label>
+					<div class="col-md-9">
+						<select class="form-control" name="status">
+							<option value="0" <?php if ($event_info->status == 0): ?>
+								selected
+							<?php endif ?> >Incoming</option>
+							<option value="1" <?php if ($event_info->status == 1): ?>
+								selected
+							<?php endif ?> >Active</option>
+							<option value="2" <?php if ($event_info->status == 2): ?>
+								selected
+							<?php endif ?> >Completed</option>
+							<option value="3" <?php if ($event_info->status == 3): ?>
+								selected
+							<?php endif ?> >Canceled</option>
+						</select>
+					</div>
+				</div>
+
 				<div class="row form-group">
 					<div class="d-none">
 						<input type="hidden" name="event_id" value="<?=isset($event_info->id) ? $event_info->id : 0?>">
+						<input type="hidden" name="year_id" value="<?=isset($event_info->year_id) ? $event_info->year_id : 0?>">
+
 					</div>
 					<label class="col-md-3" for="event_title">&nbsp;</label>
 					<div class="col-md-9">

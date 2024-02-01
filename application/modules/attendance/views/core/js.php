@@ -11,7 +11,7 @@ function onScanSuccess(decodedText, decodedResult) {
         var student_id = qrcode_result[0];
             var info = JSON.parse(qrcode_result[1])
            // console.log(info)
-            var table_body = $('#table-attendees tbody')
+            /*var table_body = $('#table-attendees tbody')
                 $(table_body).prepend(
                     $('<tr/>').append(
                         $('<td/>').text(student_id)
@@ -26,6 +26,7 @@ function onScanSuccess(decodedText, decodedResult) {
                         
                         ).data('student_id',student_id)
                     );
+                */
             var formdata = $('#form-time-in-out').serializeObject();
                 formdata.student_id = student_id;
                /*
@@ -118,3 +119,47 @@ function checktime(i){
     if (i < 10) {i = "0"+i};
     return i;
 }  
+
+
+$(function(){
+
+    $(document).on('click','#btn-stop-event',function(){
+        var formdata = {};
+            formdata.action = 'stop';
+            formdata.event_id  = $(this).data('event_id');
+            //var data = {}
+            //data.status = true;
+            //data.msg = "Sample msg";
+            //notify(data);
+            //return false;
+            var tr = $(this).parent().parent();
+            if (confirm('This action will stop the event! Click Ok to continue.')) {
+            console.log(formdata)
+
+
+/**/
+        $.ajax({
+            url: '<?=site_url('events/stop')?>',
+            data:formdata,
+            dataType:'json',
+            method:'POST',
+            success:
+            function(response){
+                console.log(response)
+                if (response.status == true) {
+                   window.location = '<?=site_url('events')?>';
+                }
+                notify(response)
+            },
+            error:
+            function (i,e) {
+                // body...
+                console.log(i.responseText)
+            }
+        })
+
+    /*  */
+
+            }
+    })
+})

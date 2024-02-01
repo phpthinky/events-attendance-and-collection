@@ -32,6 +32,98 @@
     $this->template->load($this->theme,$data);
   }
 
+  public function schoolyear()
+  {
+
+    if ($this->input->post()) {
+      // code...
+      switch ($this->input->post('action')) {
+        case 'add':
+          // code...
+          $sy_add = array(
+            'start_year'=>$this->input->post('start_year'),
+            'end_year'=>$this->input->post('end_year'),
+            'status'=>$this->input->post('status')
+            );
+          if ($sy_add['end_year'] < $sy_add['start_year']) {
+            // code...
+            echo json_encode(array('status'=>false,'msg'=>'Failed! Invalid school year.'));
+
+            exit;
+          }
+          if($result = $this->msettings->addschoolyear($sy_add)){
+            echo json_encode(array('status'=>true,'msg'=>'Added successfully.'));
+          }else{
+            echo json_encode(array('status'=>false,'msg'=>'Failed! No data was added.'));
+
+          }
+          break;
+
+        case 'edit':
+          // code...
+          $sy_add = array(
+            'id'=>$this->input->post('year_id'),
+            'start_year'=>$this->input->post('start_year'),
+            'end_year'=>$this->input->post('end_year'),
+            'status'=>$this->input->post('status')
+            );
+
+          if($result = $this->msettings->editschoolyear($sy_add)){
+            echo json_encode(array('status'=>true,'msg'=>'Updated successfully.'));
+          }else{
+            echo json_encode(array('status'=>false,'msg'=>'Failed! No data was updated.'));
+
+          }
+          break;
+        case 'trash':
+
+          if($this->msettings->trashschoolyear($this->input->post('year_id'))){
+            echo json_encode(array('status'=>true,'msg'=>'Move to trash.'));
+
+          }
+          break;
+        
+        default:
+          // code...
+        echo json_encode(noinput());
+          break;
+      }
+
+      exit();
+    }
+    $data = new stdClass();
+
+      $listschoolyear =array();
+    if($listschoolyear = $this->msettings->listschoolyear()){
+      foreach ($listschoolyear as $key => $value) {
+        // code...
+        $listschoolyear[$key]->sy_status = schoolyear_status($value->status);
+        $listschoolyear[$key]->sy_start_year = monthyear($value->start_year);
+        $listschoolyear[$key]->sy_end_year =  monthyear($value->end_year);
+      }
+    }
+    $data->listschoolyear = $listschoolyear;
+    $data->content = 'settings/schoolyear';
+    $this->template->load($this->theme,$data);
+  }
+
+  public function listschoolyears($value='')
+  {
+    // code...
+      $listschoolyear =array();
+    if($listschoolyear = $this->msettings->listschoolyear()){
+      foreach ($listschoolyear as $key => $value) {
+        // code...
+        $listschoolyear[$key]->sy_status = schoolyear_status($value->status);
+        $listschoolyear[$key]->sy_start_year = monthyear($value->start_year);
+        $listschoolyear[$key]->sy_end_year =  monthyear($value->end_year);
+      }
+    }
+
+    echo json_encode($listschoolyear);
+  }
+  
+
   public function semester($value='')
   {
     // code...
@@ -72,7 +164,7 @@
           case 'Reset':
             // code...
           $result = "Tables successfully emptied".
-          $this->settings_model->reset_all();
+          $this->msettings->reset_all();
             break;
           
           default:
@@ -85,7 +177,7 @@
       $data = new stdClass();
       $data->action = $result;
       $data->content = 'settings/backup';
-      $this->template->dashboard($data);    
+      $this->template->load($this->theme,$data);    
 
     }
 

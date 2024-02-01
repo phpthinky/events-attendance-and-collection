@@ -13,13 +13,18 @@ $(function(){
 		$.ajax({
 			url: '<?=site_url('course/create')?>',
 			data:formdata,
-			dataType:'text',
+			dataType:'json',
 			method:'POST',
 			processData:false,
 			contentType:false,
 			success:
 			function(response){
 				console.log(response)
+				if (response.status == true) {
+					$().nSuccess(response.msg)
+				}else{
+					$().nError(response.msg)
+				}
 			},
 			error:
 			function (i,e) {
