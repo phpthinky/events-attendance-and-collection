@@ -1,5 +1,10 @@
 <section class="content-counter">
 	
+	<div class="row d-none">
+		<div class="col-md-3">
+			<a href="<?=site_url('settings/restart_semester')?>" class="btn btn-sm btn-block btn-outline-primary">New semester</a>
+		</div>
+	</div>
 	<div class="row">
 		<!-- enrollment -->
 
@@ -23,8 +28,8 @@
 					<label><i class="fa fa-users"></i> Total collections</label>
 					<hr>
 					<center>
-						<h1>0</h1>
-					<span>Students</span></center>
+						<h1><?=$total_collections?></h1>
+					<span>Amount</span></center>
 				</div>
 			</div>
 		</div>
@@ -85,5 +90,18 @@
 		</div>
 
 		<?php endif ?>
+	</div>
+</section>
+
+<section class="content">
+	
+
+	<div class="card" id="charts-container">
+		<div class="card-body">
+			<div class="row">
+				
+				<canvas id="charts-collections"></canvas>
+			</div>
+		</div>
 	</div>
 </section>

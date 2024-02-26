@@ -68,149 +68,23 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><img src="<?=base_url('assets/img/org-logo-sidebar.png')?>"></a>
+              <a href="<?=site_url()?>" class="site_title"><img src="<?=base_url('assets/img/org-logo-sidebar.png')?>"></a>
             </div>
 
             <div class="clearfix"></div>
-
-            <!-- menu profile quick info -->
-            <div class="profile clearfix">
-              <div class="profile_pic">
-                <img src="<?=base_url('assets/img/user.png')?>" alt="..." class="img-circle profile_img">
-              </div>
-              <div class="profile_info">
-                <span>Welcome,</span>
-                <h2><?=$this->session->userdata('username') ? $this->session->userdata('username') : 'Juan Dela Cruz'?></h2>
-              </div>
-            </div>
-            <!-- /menu profile quick info -->
-
-            <br />
-
+  
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-              <div class="menu_section">
-                <h3>General</h3>
-                <ul class="nav side-menu">
-                  <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="<?=site_url('dashboard')?>">Dashboard</a></li>
-                      <li><a href="<?=site_url('login/signout')?>">Sign out</a></li>
-                    </ul>
-                  </li>
-                  <li><a><i class="fa fa-edit"></i> Students Library <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="<?=site_url('students')?>">List of all student</a></li>
-                      <li><a href="<?=site_url('students/register')?>">New register</a></li>
-                      <?php if (!empty($sidebar_course)): ?>
-                        <?php foreach ($sidebar_course as $key => $value): ?>
-                      <li><a href="<?=site_url('students/course/'.$value)?>"><?=strtoupper($value)?></a></li>
-                          
-                        <?php endforeach ?>
-                      <?php endif ?>
-                     </ul>
-                  </li>
-                  <?php if ($this->aauth->is_allowed(2)): ?>
-                    
-                  <li><a><i class="fa fa-desktop"></i> Collections <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      
-                      <li><a href="<?=site_url('collections/scanner')?>">Scanner</a></li>
-                      <li><a href="<?=site_url('collections')?>">Chart</a></li>
-                      <li><a href="<?=site_url('collections/first')?>">First Semester</a></li>
-                      <li><a href="<?=site_url('collections/second')?>">Second Semester</a></li>
-
-                    </ul>
-                  </li>
-                  <?php endif ?>
-                  <li><a><i class="fa fa-table"></i> Events <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <?php if ($this->aauth->is_allowed(1)): ?>
-                        
-                      <li><a href="<?=site_url('events')?>">List all events</a></li>
-                      <?php endif ?>
-                      <?php if ($this->aauth->is_admin()): ?>
-                        
-                      <li><a href="<?=site_url('events/create')?>">Create event</a></li>
-
-                      <?php endif ?>
-                    </ul>
-                  </li>
-                  <?php if ($this->aauth->is_admin()): ?>
-                    
-
-                  <li><a><i class="fa fa-clone"></i>Settings <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="<?=site_url('course')?>">Course settings</a></li>
-                      <li><a href="<?=site_url('collections/settings')?>">Collection settings</a></li>
-                      <li class="d-none"><a href="<?=site_url('settings/semester')?>">Semester settings</a></li>
-                      <li><a href="<?=site_url('settings/schoolyear')?>">School year settings</a></li>
-                      <li><a href="<?=site_url('users')?>">Account settings</a></li>
-                      <li><a href="<?=site_url('settings/backup')?>">Reset system settings</a></li>
-                        
-                    </ul>
-                  </li>
-
-                  <?php endif ?>
-                </ul>
-              </div>
-              <div class="menu_section d-none">
-                <h3>Live On</h3>
-                <ul class="nav side-menu">
-                  <li><a><i class="fa fa-bug"></i> Attendance <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="<?=site_url('attendance')?>">Start</a></li>
-                    </ul>
-                  </li>                
-                </ul>
-              </div>
-
+             
             </div>
             <!-- /sidebar menu -->
 
-            <!-- /menu footer buttons -->
-            <div class="sidebar-footer hidden-small">
-              <a data-toggle="tooltip" data-placement="top" title="Settings">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="Lock">
-                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="Logout" href="<?=site_url('login/signout')?>">
-                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-              </a>
-            </div>
-            <!-- /menu footer buttons -->
           </div>
         </div>
 
         <!-- top navigation -->
         <div class="top_nav">
           <div class="nav_menu">
-              <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-              </div>
-              <nav class="nav navbar-nav">
-              <ul class=" navbar-right">
-                <li class="nav-item dropdown open" style="padding-left: 15px;">
-                  <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                    <img src="<?=base_url('assets/img/user.png')?>" alt=""><?=$this->session->userdata('username') ? $this->session->userdata('username') : 'Juan Dela Cruz'?>
-                  </a>
-                  <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item d-none"  href="javascript:;"> Profile</a>
-                      <a class="dropdown-item d-none"  href="javascript:;">
-                        <span class="badge bg-red pull-right">50%</span>
-                        <span>Settings</span>
-                      </a>
-                  <a class="dropdown-item d-none"  href="javascript:;">Help</a>
-                    <a class="dropdown-item"  href="<?=site_url('login/signout')?>"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
-                  </div>
-                </li>
-
-            </nav>
           </div>
         </div>
         <!-- /top navigation -->

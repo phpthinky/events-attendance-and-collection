@@ -59,9 +59,17 @@
 									<label class="col-md-12"  style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out" value="out"> TIME OUT </label>
 									</form>
 									<hr>
+									
 									<?php if (!empty($event_info)): ?>
-										
-									<div class="col-md-12"><button id="start-scanner" class="btn btn-outline-primary">Start scanner</button> <button id="btn-stop-event" data-event_id="<?=$event_info->id?>" class="btn btn-outline-danger">End event</button></div>
+										<?php if ($event_info->status == 1): ?>
+											
+									<div class="col-md-12"><button id="start-scanner" class="btn btn-outline-success btn-sm">Start scanner</button> <button id="btn-stop-event" data-event_id="<?=$event_info->id?>" class="btn btn-outline-danger btn-sm">End event</button> </div>
+									<div class="col-md-12">
+										<hr>
+										<button id="btn-cancel-event" data-event_id="<?=$event_info->id?>" class="btn btn-outline-primary btn-sm">Cancel event</button>
+									</div>
+
+										<?php endif ?>
 									<?php endif ?>
 								</div>
 

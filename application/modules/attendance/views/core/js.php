@@ -162,4 +162,29 @@ $(function(){
 
             }
     })
+
+
+
+    $('#btn-cancel-event').on('click',function() {
+        if (confirm('This will cancel the current event. No collection will be computed.')) {
+            //notify('Canceled','warning');
+            let event_id = $(this).data('event_id')
+            console.log(event_id);
+            $.ajax({
+                url:'<?=site_url('events/canceled/')?>'+event_id,
+                method:'POST',
+                dataType:'JSON',
+                beforeSend:function(){
+                    alert('Loading kunwari......')
+                },
+                success:function (response) {
+                    // body...
+                    console.log(response)
+                },
+                error:function(i,e) {
+                    console.log(i.responseText)
+                }
+            })
+        }
+    })
 })

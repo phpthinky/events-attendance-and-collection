@@ -21,7 +21,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="<?=assets_url()?>img/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="<?=assets_url()?>img/icon/favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="<?=assets_url()?>img/icon/favicon-16x16.png">
-<link rel="manifest" href="/manifest.json">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff">
@@ -46,5 +45,12 @@
       <a class="hiddenanchor" id="signin"></a>
 <?php $this->load->view($content); ?>
     </div>
+    <script src="<?=base_url()?>/template/gentelella/vendors/jquery/dist/jquery.min.js"></script>
+    <script src="<?=assets_url()?>/plugins/notify/notify.min.js"></script>
+
+    <script type="text/javascript">
+      <?php $this->load->view('core/js.php'); ?>
+
+    </script>
   </body>
 </html>

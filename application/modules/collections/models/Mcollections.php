@@ -209,9 +209,18 @@ class Mcollections extends CI_Model
 
 
 
-	public function get_chartData($course_id=0)
+
+	public function get_totalCollections($year_id=0,$course_id=0)
 	{
 		// code...
+
+		$query = $this->db
+			->select('sum(total_na_bayad) as total')
+			->get('v_bayad');
+			$row = $query->row(0);
+			return $row->total;
+
+
 
 
 	}

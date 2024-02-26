@@ -156,8 +156,8 @@
  	public function create_permission($value='')
  	{
  		// code...
- 		//$this->aauth->create_perm('Attendance Officer','The one who has permission to check the attendance of the students');
- 		//$this->aauth->create_perm('Collection Officer','The one who has permission to collect payment from the students');
+ 		$this->aauth->create_perm('Attendance Officer','The one who has permission to check the attendance of the students');
+ 		$this->aauth->create_perm('Collection Officer','The one who has permission to collect payment from the students');
  	}
 
 

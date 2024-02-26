@@ -2,7 +2,7 @@
 	<div class="card" id="action-container">
 		<div class="row">
 			<div class="col-md-4">
-				<select class="form-control" name="year_id">
+				<select class="form-control" name="year_id" id="chart-year-id">
 					<option value="0">Select school year</option>
 					 <?php if (!empty($sy)): ?>
                               <?php foreach ($sy as $key => $value): ?>

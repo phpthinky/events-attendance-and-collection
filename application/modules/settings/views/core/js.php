@@ -138,7 +138,7 @@ function fill_sy_table(argument) {
 	  var items = [];
 	  var $i =1;
 	  $.each( data, function( key, val ) {
-	    items.push( '<tr><td>'+$i+'</td><td>'+val.sy_start_year+' - '+val.sy_end_year+'</td><td>'+val.sy_status+'</td><td><a href="#" data-year_id="'+val.id+'" class="btn btn-sm btn-edit-sy"><i class="fa fa-edit"></i></a> <a href="#" data-year_id="'+val.id+'" class="btn btn-sm btn-ouline-danger btn-trash-sy"><i class="fa fa-trash"></i></a></td></tr>' );
+	    items.push( '<tr><td>'+$i+'</td><td>'+val.sy_start_year+' - '+val.sy_end_year+'</td><td>'+val.semester+'</td><td>'+val.sy_status+'</td><td><a href="#" data-year_id="'+val.id+'" class="btn btn-sm btn-edit-sy"><i class="fa fa-edit"></i></a> <a href="#" data-year_id="'+val.id+'" class="btn btn-sm btn-ouline-danger btn-trash-sy"><i class="fa fa-trash"></i></a></td></tr>' );
 	 	$i++;
 	  });
 	// console.log(items);

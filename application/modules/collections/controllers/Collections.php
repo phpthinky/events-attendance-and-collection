@@ -241,8 +241,9 @@ class Collections extends MY_Controller
 		$student_id = $this->input->post('student_id');
 		$amount_paid = $this->input->post('amount_paid');
 
-		$current_sem = $this->msettings->getcurrentsem();
 		$current_sy = $this->msettings->get_current_sy();
+		$current_sem = $current_sy->semester;
+
 		if ($this->input->post('type') == 'late') {
 			// code...
 		

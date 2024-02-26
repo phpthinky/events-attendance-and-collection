@@ -12,17 +12,14 @@ class Dashboard extends MY_Controller
 			redirect('login');
 		}
 		$this->load->model('students/mstudents');
+		$this->load->model('collections/mcollections');
 	}
 	public function index($site='')
 	{
 		// code...
 		$data = new stdClass();
 		   $data->total_students = $this->mstudents->total();
-		   $data->affected_tfamily = 0;
-		   $data->affected_tbarangay = 0;
-
-
-
+		   $data->total_collections = $this->mcollections->get_totalCollections();
 		$data->content = 'dashboard/index';
 		$this->template->load($this->theme,$data);
 	}

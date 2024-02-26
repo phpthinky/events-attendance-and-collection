@@ -35,7 +35,20 @@
 				<hr>
 				<label>Time in-out</label>
 
+
 				<div class="row form-group">
+					<label class="col-md-3" for="event_title"></label>
+					<div class="col-md-9">
+
+						<select class="form-control" name="has_afternoon">
+							<option value="0">Whole day</option>
+							<option value="1">Morning only</option>
+							<option value="2">Afterrnoon only</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="row form-group time-in morning">
 					<label class="col-md-3" for="event_title">Morning</label>
 					<div class="col-md-9"><div class="row">
 						
@@ -50,7 +63,7 @@
 					</div>
 					</div>
 				</div>
-				<div class="row form-group">
+				<div class="row form-group time-in afternoon">
 					<label class="col-md-3" for="event_title">Afternoon Timein</label>
 					<div class="col-md-9">
 						<div class="row">

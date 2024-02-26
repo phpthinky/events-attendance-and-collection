@@ -20,8 +20,11 @@
   public function getcurrentsem($value='')
   {
     // code...
-    $row =  $this->db->limit(1)->get('settings_semester')->row(0);
-    return $row->current_semester;
+    //$row =  $this->db->limit(1)->get('settings_semester')->row(0);
+    //return $row->current_semester;
+    $row = $this->get_current_sy();
+    return $row->semester;
+
   }
 
   public function setsemestersettings($data)
@@ -45,6 +48,13 @@
     return $this->db->insert('settings_schoolyear',$data);
   }
 
+  public function endschoolyear()
+  {
+    $sy = $this->get_current_sy();
+    $this->db->where('status',1);
+    $this->db->update('settings_schoolyear',array('status'=>2));
+    return $sy;
+  }
   public function editschoolyear($data)
   {
 
@@ -74,7 +84,7 @@
       // code...
       $this->db->where('status',$status);
     }
-    return $this->db->get_where('settings_schoolyear',array('is_deleted'=>null))->result();
+    return $this->db->order_by('start_year','desc')->get_where('settings_schoolyear',array('is_deleted'=>null))->result();
   }
 
   public function get_current_sy($value='')
@@ -99,8 +109,12 @@
   {
     $this->db->truncate('course');
     $this->db->truncate('students');
+    $this->db->truncate('students_enrolled');
     $this->db->truncate('course_students');
+    $this->db->truncate('course_students');
+    $this->db->truncate('settings_schoolyear');    
     $this->db->truncate('events');
+    $this->db->truncate('events_attendance');    
   $this->db->truncate('events_absent');
   $this->db->truncate('events_collection');
   $this->db->truncate('events_late');
@@ -109,6 +123,8 @@
     $this->db->delete('aauth_user_to_group',array('user_id <>'=>1));
     $sql = "ALTER TABLE `aauth_users` AUTO_INCREMENT = 2";
     $this->db->query($sql);
+  $this->aauth->create_perm('Attendance Officer','The one who has permission to check the attendance of the students');
+  $this->aauth->create_perm('Collection Officer','The one who has permission to collect payment from the students');
     
   }
 

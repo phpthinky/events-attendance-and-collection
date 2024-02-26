@@ -146,9 +146,12 @@ class Mevents extends CI_Model
 		$students = $this->db->get_where('course_students',array('status'=>1,'semester'=>$semester,'year_id'=>$year_id))->result();
 		//$attendace = $this->db->get_where('events_attendance',array('event_id'=>$event_id))->result();
 		$data =  array();
+
 		foreach ($students as $key => $value) {
 			// code...
-			if ($this->check_events_attendees($value->course_id,$value->grade,$event_id)) {
+			//$result = $this->check_events_attendees($value->course_id,$value->grade,$event_id);
+			//var_dump($result);
+			if ($result = $this->check_events_attendees($value->course_id,$value->grade,$event_id)) {
 				// code...
 				if (!$this->db->get_where('events_attendance',array('event_id'=>$event_id,'student_id'=>$value->student_id))->result()) {
 					// code...
@@ -157,6 +160,7 @@ class Mevents extends CI_Model
 				}
 			}
 		}
+
 		return $data;
 	}
 
@@ -221,12 +225,35 @@ class Mevents extends CI_Model
 		if($result =  $query->result()){
 			foreach ($result as $key => $value) {
 				// code...
+
 				$info = $this->info($value->event_id);
+				$am = $this->db->get_where('events_attendance',array('event_id'=>$value->event_id,'student_id'=>$value->student_id,'time_in_type '=>1))->row(0);
+				$pm = $this->db->get_where('events_attendance',array('event_id'=>$value->event_id,'student_id'=>$value->student_id,'time_in_type '=>2))->row(0);
+				$am_in = '';
+				$am_out = '';
+				$pm_in = '';
+				$pm_out = '';
+				if (!empty($am)) {
+					// code...
+					$am_in =(!empty($am->timein) ? time_format($am->timein) : '');
+					$am_out =(!empty($am->timeout) ? time_format($am->timeout) : '');
+				}
+				if (!empty($pm)) {
+					// code...
+
+					$pm_in =(!empty($pm->timein) ? time_format($pm->timein) : '');
+					$pm_out =(!empty($pm->timeout) ? time_format($pm->timeout) : '');
+									}
 				$d = (object) array(
 					'event_title'=>$info->event_title,
 					'no_days'=>$info->no_days,
 					'penalty'=>$value->penalty,
 					'payment_status'=>$value->payment_status,
+					'am_in'=>$am_in,
+					'am_out'=>$am_out,
+					'pm_in'=>$pm_in,
+					'pm_out'=>$pm_out,
+					'type'=>'late'
 					);
 				$data[] = $d;
 
@@ -239,20 +266,64 @@ class Mevents extends CI_Model
 		if($result2 =  $query2->result()){
 			foreach ($result2 as $key => $value) {
 				// code...
+				$info = null;
+				$am = null;
+				$pm = null;
+
 				$info = $this->info($value->event_id);
+
+				$am = $this->db->get_where('events_attendance',array('event_id'=>$value->event_id,'student_id'=>$value->student_id,'time_in_type '=>1))->row(0);
+				$pm = $this->db->get_where('events_attendance',array('event_id'=>$value->event_id,'student_id'=>$value->student_id,'time_in_type '=>2))->row(0);
+				$am_in = '';
+				$am_out = '';
+				$pm_in = '';
+				$pm_out = '';
+				if (!empty($am)) {
+					// code...
+					$am_in = $am->timein;
+					$am_out = $am->timeout;
+				}
+				if (!empty($pm)) {
+					// code...
+					$pm_in = $pm->timein;
+					$pm_out = $pm->timeout;
+				}
 				$d = (object) array(
 					'event_title'=>$info->event_title,
 					'no_days'=>$info->no_days,
 					'penalty'=>$value->penalty,
 					'payment_status'=>$value->payment_status,
+					'am_in'=>$am_in,
+					'am_out'=>$am_out,
+					'pm_in'=>$pm_in,
+					'pm_out'=>$pm_out,
+					'type'=>'absent'
 					);
 				$data[] = $d;
 
 			}
 		}
 		return $data;
-	}
+	
 
 }
+public function get_attendance($student_id='')
+{
+	// code...
+/*	$sql = "SELECT student_id,event_id,date_of_event,(select timein FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as morning_in,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as morning_out FROM events_attendance as t1 GROUP by event_id,student_id;";
+*/
 
+	
+}
+
+/*
+
+CREATE VIEW v_events_attendance as SELECT student_id,event_id,date_of_event,penalty_late,(select timein FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as am_in,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as am_out,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 2 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as pm_in ,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 2 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as pm_out FROM events_attendance as t1 GROUP by event_id,student_id;
+
+*/
+
+
+
+//end class
+}
  ?>

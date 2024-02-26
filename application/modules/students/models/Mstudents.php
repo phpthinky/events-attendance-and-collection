@@ -13,6 +13,7 @@ class Mstudents extends CI_Model
 	public function add($data='')
 	{
 		// code...
+
 		$student_name = array(
 			'fName'=>$data->fName,
 			'mName'=>$data->mName,
@@ -22,8 +23,13 @@ class Mstudents extends CI_Model
 		if (!$this->find($student_name)) {
 			// code...
 
-		$this->db->insert('students',$data);
+		if($this->db->insert('students',$data)){
 		return $this->db->insert_id();
+
+	}else{
+		return $this->db->error();
+
+	}
 
 		}else{
 			return false;
@@ -166,6 +172,7 @@ class Mstudents extends CI_Model
 			->from('students')
 			->join('v_penalty_total','students.code = v_penalty_total.student_id','LEFT')
 			->where('course_id',$course_id)
+			->where('status <> ',0)
 			->group_by('student_id');
 
 
@@ -234,7 +241,8 @@ class Mstudents extends CI_Model
 			->select('students.*,sum(late) as late,sum(absent) as absent')
 			->from('students')
 			->join('v_penalty_total','students.code = v_penalty_total.student_id','LEFT')
-			->group_by('student_id');
+			->group_by('student_id')
+			->where('status <>',0);
 			$query = $this->db->get();
 			if($result = $query->result()){
 				$data = array();
@@ -324,6 +332,22 @@ class Mstudents extends CI_Model
 		}
 		return $this->db->insert('course_students',$data);
 	}
+	public function enrolled($student_id='')
+	{
+		// code...
+		return $this->db->get_where('course_students',array('student_id'=>$student_id,'status'=>1))->num_rows();
+
+	}
+	public function en_roll($data=array())
+	{
+		if (!$this->db->get_where('students_enrolled',$data)) {
+			// code...
+			$this->db->insert('students_enrolled',$data);
+			return $this->db->insert_id();
+		}
+		return false;
+
+	}
 	public function quick_update($student_id='',$data=array())
 	{
 		// code...
@@ -340,6 +364,39 @@ class Mstudents extends CI_Model
 		}
 		return 0;
 	}
+
+
+	public function un_enrollall($year_id=0)
+	{
+		// code...
+		$this->db->where('status',1);
+		return $this->db->update('course_students',array('status'=>2));
+	}
+
+
+
+
+	public function register($value='')
+	{
+		// code...
+
+		$result =  $this->db->get_where('course_students',array('status'=>0))->result();
+		$data = array();
+		if (!empty($result)) {
+			// code...
+			foreach ($result as $key => $value) {
+				// code...
+				$data[] = $this->info($value->student_id);
+			}
+
+		}
+		return $data;
+	}
+
+
+
+
+	///////////end class
 }
 
  ?>

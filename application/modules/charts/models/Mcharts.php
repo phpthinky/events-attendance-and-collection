@@ -11,7 +11,7 @@ class Mcharts extends CI_Model
 	{
 		// code...
 			$sy = $this->db->get_where('settings_schoolyear',array('is_deleted'=>null,'status'=>1))->row(0);
-			$sem = $this->db->get('settings_semester')->row(0);
+			$sem = $sy->semester;
 		if(!empty($year_id) && !empty($semester)){
 
 		$sql = sprintf("SELECT SUM(total_payment) as total_collection,course_id,semester FROM v_bayad_by_course WHERE year_id = %u AND semester = $semester  GROUP BY course_id,semester ",$year_id);

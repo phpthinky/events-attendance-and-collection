@@ -21,6 +21,7 @@
 											<tr>
 												<th>#</th>
 												<th>School Year</th>
+												<th>Semester</th>
 												<th>Status</th>
 												<th></th>
 											</tr>
@@ -47,6 +48,13 @@
 		            <hr>
 		            <form class="form-responsive" id="form-school-year">
 		            	<div class="row form-group">
+		            		<label>Semester</label>
+		            		<select name="semester" class="form-control">
+		            			<option value="1">1st Semester</option>
+		            			<option value="2">2nd Semester</option>
+		            		</select>
+		            	</div>
+						<div class="row form-group">
 		            		<label>Start of class</label>
 		            		<input type="date" name="start_year" class="form-control" required>
 		            	</div>
@@ -56,11 +64,11 @@
 		            		<input type="date" name="end_year" class="form-control" required>
 		            	</div>
 
-		            	<div class="row form-group">
+		            	<div class="row form-group d-none">
 		            		<label>Status</label>
 		            		<select name="status" class="form-control" required>
 		            			<option value="0">Select status</option>
-		            			<option value="1">Present</option>
+		            			<option value="1" selected>Present</option>
 		            			<option value="2">Completed</option>
 		            		</select>
 		            	</div>

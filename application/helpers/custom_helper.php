@@ -108,6 +108,7 @@ if (!function_exists('date_time')) {
 		
 		}
 }
+
 if (!function_exists('noinput')) {
 			function noinput(){
 		return array('status'=>false,'msg'=>'No input data.');
@@ -450,6 +451,38 @@ if ( ! function_exists('is_paid'))
 		return $sem;
 	}
 }
+
+if (!function_exists('filter')) {
+	// code...
+	function filter($text){
+
+	//return preg_replace('/[\s]+/mu', ' ', $var);
+
+    $text = preg_replace('/[\t\n\r\0\x0B]/', '', $text);
+    $text = preg_replace('/([\s])\1+/', ' ', $text);
+    $text = trim($text);
+    return $text;
+	}
+
+
+}
+if (!function_exists('get_name')) {
+
+ function get_name($value='')
+{
+	// code...
+	$name = '';
+	if (!empty($value)) {
+		// code..
+		$name =filter($value->fName.' '.$value->mName.' '.$value->lName.' '.$value->ext);
+	}
+	return $name;
+}
+
+}
+
+
+
 
 
  ?>

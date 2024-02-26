@@ -37,12 +37,16 @@ class Events extends MY_Controller
 		
 		$data = new stdClass();
 
-		$sy = $this->msettings->get_current_sy();
+		$data->year_id = 0;
+    	$data->semester = 0;
+		if($sy = $this->msettings->get_current_sy()){
+
 		$data->year_id = $sy->id;
-    	$data->semester = $this->msettings->getcurrentsem();
+    	$data->semester = $sy->semester;	
+		}
 		$data->list_courses = $this->mcourse->list();
 		$data->collections_settings = $this->mcollections->settings();
-		$data->content = 'events/create';
+		$data->content = 'events/create_new';
 		$this->template->load($this->theme,$data);
 	}
 	public function add($value='')
@@ -61,11 +65,33 @@ class Events extends MY_Controller
 			$data2add->event_title = $this->input->post('event_title');
 			$data2add->event_startdate = $this->input->post('event_startdate');
 			$data2add->event_enddate = $data2add->event_startdate;
+
+			$has_afternoon = $this->input->post('has_afternoon');
+
+			if ($has_afternoon == 0) {
+				// code...
+
+
 			$data2add->morning_timein = $this->input->post('morning_timein');
 			$data2add->morning_timeout = $this->input->post('morning_timeout');
 			$data2add->afternoon_timein = $this->input->post('afternoon_timein');
 			$data2add->afternoon_timeout = $this->input->post('afternoon_timeout');
 			
+			}elseif($has_afternoon == 1){
+
+
+			$data2add->morning_timein = $this->input->post('morning_timein');
+			$data2add->morning_timeout = $this->input->post('morning_timeout');
+			
+			}else{
+
+			$data2add->afternoon_timein = $this->input->post('afternoon_timein');
+			$data2add->afternoon_timeout = $this->input->post('afternoon_timeout');
+			
+			}
+
+			$data->has_afternoon = $has_afternoon;
+
 			$data2add->late = $this->input->post('late');
 			$data2add->absent = $this->input->post('absent');
 			$data2add->year_id = $this->input->post('year_id');
@@ -143,11 +169,34 @@ class Events extends MY_Controller
 			$data2add->event_startdate = $this->input->post('event_startdate');
 			$data2add->event_enddate = $this->input->post('event_startdate');
 
+
+			$has_afternoon = $this->input->post('has_afternoon');
+
+			if ($has_afternoon == 0) {
+				// code...
+
+
 			$data2add->morning_timein = $this->input->post('morning_timein');
 			$data2add->morning_timeout = $this->input->post('morning_timeout');
 			$data2add->afternoon_timein = $this->input->post('afternoon_timein');
 			$data2add->afternoon_timeout = $this->input->post('afternoon_timeout');
 			
+			}elseif($has_afternoon == 1){
+
+
+			$data2add->morning_timein = $this->input->post('morning_timein');
+			$data2add->morning_timeout = $this->input->post('morning_timeout');
+			
+			}else{
+
+			$data2add->afternoon_timein = $this->input->post('afternoon_timein');
+			$data2add->afternoon_timeout = $this->input->post('afternoon_timeout');
+			
+			}
+
+			$data->has_afternoon = $has_afternoon;
+
+
 			$data2add->status = $this->input->post('status');
 			$data2add->year_id = $this->input->post('year_id');
 			$data2add->semester = $this->input->post('semester');
@@ -197,7 +246,7 @@ class Events extends MY_Controller
 		$data->courses = $courses;
 
 		$data->collections_settings = $this->mcollections->settings();
-		$data->content = 'events/edit';
+		$data->content = 'events/edit_new';
 		$this->template->load($this->theme,$data);
 	}
 	public function attendees($id='')
@@ -245,13 +294,14 @@ class Events extends MY_Controller
 
 			$current_sy = $this->msettings->get_current_sy();
 			$year_id = $current_sy->id;
-			$semester = $this->msettings->getcurrentsem();
+			$semester = $current_sy->semester;
 			// code...
 			if($this->mevents->update($this->input->post('event_id'),array('status'=>2,'date_completed'=>date('Y-m-d H:i:s')))){
 				$info = $this->mevents->info($this->input->post('event_id'));
-
+				var_dump($info); 
 				$absents = array();
 				if($absents = $this->mevents->list_absents($this->input->post('event_id'),$year_id,$semester)){
+						 	
 					foreach ($absents as $key => $value) {
 						// code...
 						$absent = array(
@@ -260,9 +310,9 @@ class Events extends MY_Controller
 							'student_id'=>$value->student_id,
 							'date_of_event'=>date('Y-m-d')
 						);
-						$this->mevents->set_absent_penalty($absent);
+						$result = $this->mevents->set_absent_penalty($absent);
 					}
-				}
+				}	 	
 
 				$late_list = array();
 				if($late_list = $this->mevents->list_late($this->input->post('event_id'))){
@@ -286,6 +336,32 @@ class Events extends MY_Controller
 			echo json_encode(noinput());
 		}
 	}
+
+
+
+public function canceled($event_id=0)
+{
+	// code...
+	$this->load->model('mevents');
+
+	$result = $this->mevents->update($event_id,array('status'=>3));
+	echo json_encode(array('status'=>$result));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	///end classs
 }
 
  ?>

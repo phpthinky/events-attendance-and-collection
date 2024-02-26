@@ -1,30 +1,3 @@
-// Bar chart
-/*
-
-		new Chart(document.getElementById("chart-collections"), {
-			type: 'bar',
-			data: {
-				labels: ["BSCRIM", "BSIT", "BSED", "BEED", "BSAT"],
-				datasets: [
-					{
-						label: "Collections",
-						backgroundColor: ["#51EAEA", "#FCDDB0",
-							"#FF9D76", "#FB3569", "#82CD47"],
-						data: [478, 267, 829, 1732, 1213]
-					}
-				]
-			},
-			options: {
-				legend: { display: false },
-				title: {
-					display: true,
-					text: 'Collections sample bar chart'
-				}
-			}
-		});
-
-		
-		*/
 function show_chart(clabels,first,second,total,chart_title) {
 	// body...
             const chartdata = {
@@ -106,15 +79,20 @@ function show_chart(clabels,first,second,total,chart_title) {
 }
 
 
-function getData(url) {
+function getData(get_url) {
 	// body...
 		const canvas = document.getElementById("charts-collections");
-		console.log(canvas)
 		if(canvas == null){
 			return false;
 		}
+
+		if (get_url === undefined) {
+			get_url = '<?=site_url('charts/getCollectionData')?>'; 
+		}
+		console.log(get_url)
+
 	$.ajax({
-		url:'<?=site_url('charts/getCollectionData')?>',
+		url:get_url,
 		dataType:'json',
 		success:function(response){
 			let sy = $('select[name="year_id"] option:selected').text()
@@ -132,5 +110,10 @@ $(function() {
 		const canvas = document.getElementById("charts-collections");
 		$(this).attr('href',canvas.toDataURL());
 		$(this).attr('download','hello.png');
+	})
+
+	$('#chart-year-id').on('change',function(){
+		url = '<?=site_url('charts/getCollectionData/')?>'+ $(this).val();
+		getData(url);
 	})
 })

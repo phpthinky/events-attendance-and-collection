@@ -43,6 +43,7 @@
           $sy_add = array(
             'start_year'=>$this->input->post('start_year'),
             'end_year'=>$this->input->post('end_year'),
+            'semester'=>$this->input->post('semester'),
             'status'=>$this->input->post('status')
             );
           if ($sy_add['end_year'] < $sy_add['start_year']) {
@@ -52,6 +53,10 @@
             exit;
           }
           if($result = $this->msettings->addschoolyear($sy_add)){
+          $this->load->model('students/mstudents');
+
+           $this->mstudents->un_enrollall();
+
             echo json_encode(array('status'=>true,'msg'=>'Added successfully.'));
           }else{
             echo json_encode(array('status'=>false,'msg'=>'Failed! No data was added.'));
@@ -193,6 +198,38 @@
       $result['is admin allowed'] = $this->aauth->is_allowed('Guest',3);
       var_dump($result);
     }
+
+
+    public function restart_semester($value='')
+    {
+      // code...
+      $action = null;
+      if ($this->input->post()) {
+        // code...
+        $users = $this->aauth->get_user();
+
+        if ($users->pass == $this->aauth->hash_password($this->input->post('cpassword'),$this->user_id)) {
+         //$action = 'Current semester successfully ended'; 
+
+         $current_sy = $this->msettings->endschoolyear();
+         $this->load->model('students/mstudents');
+         $this->mstudents->un_enrollall();
+         $action = array('status'=>true,'msg'=>'Current semester successfully ended');  //echo json_encode(array('status'=>true,'msg'=>'Semester ended.'));
+          //echo json_encode(array('status'=>true,'msg'=>'Semester ended.'));
+        }else{
+         $action = array('status'=>false,'msg'=>'Invalid password.');  //echo json_encode(array('status'=>true,'msg'=>'Semester ended.'));
+
+        }
+        //exit();
+      }
+      $data = new stdClass();
+      $data->action = $action;
+      $data->content = 'settings/new-semester';
+      $this->template->load($this->theme,$data);    
+
+    }
+
+     
   }
 
 

@@ -162,10 +162,17 @@ class Students extends MY_Controller
 
 			if ($result_id = $this->mstudents->add($student_info)) {
 				// code...
-			$this->toqrcode($student_info->code,json_encode($student_qinfo));
-
+				$this->toqrcode($student_info->code,json_encode($student_qinfo));
 				$student_course->student_id = $student_info->code;
 				$this->mstudents->save_course($student_course);
+
+				$schoolyear = array(
+					'student_id'=>$this->input->post('student_id'),
+					'year_id'=>$this->input->post('year_id'),
+					'semester'=>$this->input->post('semester'),
+					'status'=>1
+				);
+				$this->mstudents->en_roll($schoolyear);
 				echo json_encode(array('status'=>true,'msg'=>'Student successfull added.'));
 
 
@@ -327,6 +334,17 @@ class Students extends MY_Controller
 		}
 
 	}
+
+	public function register($value='')
+	{
+		// code...
+		$data = new stdClass();
+		$data->list_students = $this->mstudents->register();
+		$data->content = 'students/list_register';
+		$this->template->load($this->theme,$data);
+	}
+
+	//end class
 
 }
 

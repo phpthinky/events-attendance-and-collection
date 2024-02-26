@@ -36,9 +36,17 @@ class Attendance extends MY_Controller
 		$data = new stdClass();
 		$data->hasScanner = true;
 		$data->event_info = $this->mevents->info($event_id);
+
 		if (!empty($data->event_info)) {
 			// code...
+			if ($data->event_info->status == 3) {
+				// do nothing
+
+
+			}else{
 			$this->mevents->update($event_id,array('status'=>1));
+
+			}
 		}
 		$data->list_events = $this->mevents->list();
 		$data->content = 'attendance/index';
@@ -57,6 +65,11 @@ class Attendance extends MY_Controller
 			}else{
 				if (!empty($s_info)) {
 					// code...
+					if (!$this->mstudents->enrolled($this->input->post('student_id'))) {
+						// code...
+				echo json_encode(array('status'=>false,'msg'=>'Student is not enrolled.'));
+						exit();
+					}
 					if(!$this->mevents->check_events_attendees($s_info->course_id,$s_info->grade,$this->input->post('event_id'))){
 
 				echo json_encode(array('status'=>false,'msg'=>'Student is not allowed.'));

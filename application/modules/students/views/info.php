@@ -73,11 +73,20 @@
 								<table class="table table-bordered">
 									<thead>
 										<tr>
-											<th>Event name</th>
-											<th>Day</th>
-											<th>Penalty</th>
-											<th>Status</th>
-
+											<th rowspan="2">Event Name</th>
+											<th rowspan="2">Day</th>
+											<th rowspan="2"></th>
+											<th colspan="2">Morning</th>
+											<th colspan="2">After noon</th>
+											<th rowspan="2">Penalty</th>
+											<th rowspan="2">Status</th>
+										</tr>
+										<tr>
+											<th>Time-in</th>
+											<th>Time-out</th>
+											<th>Time-in</th>
+											<th>Time-out</th>
+											
 										</tr>
 									</thead>
 									<tbody>
@@ -86,6 +95,11 @@
 												<tr>
 													<td><?=$value->event_title?></td>
 													<td><?=$value->no_days?></td>
+													<td><?=$value->type?></td>
+													<td><?=$value->am_in?></td>
+													<td><?=$value->am_out?></td>
+													<td><?=$value->pm_in?></td>
+													<td><?=$value->pm_out?></td>
 													<td><?=$value->penalty?></td>
 													<td><?=is_paid($value->payment_status)?></td>
 												</tr>
