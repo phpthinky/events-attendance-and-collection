@@ -1,8 +1,5 @@
 <?php 
-/*
- *
- * 
- */
+
 class Attendance extends MY_Controller
 {
 	
@@ -29,6 +26,7 @@ class Attendance extends MY_Controller
 		$data->content = 'attendance/index';
 		$this->template->load($this->theme,$data);
 	}
+
 	public function start($event_id=0)
 	{
 		// code...
@@ -41,22 +39,23 @@ class Attendance extends MY_Controller
 			// code...
 			if ($data->event_info->status == 3) {
 				// do nothing
-
-
-			}else{
+			}elseif($data->event_info->status == 0){
 			$this->mevents->update($event_id,array('status'=>1));
 
+			}else{
+				// do nothing
 			}
 		}
+		$data->event_info = $this->mevents->info($event_id);		
 		$data->list_events = $this->mevents->list();
 		$data->content = 'attendance/index';
 		$this->template->load($this->theme,$data);
 	}
-	public function record($value='')
+	public function record($event_id=0)
 	{
 		// code...
-		if ($this->input->post()) {
-			// code...
+		if($this->input->post()){
+			$event_id = $this->input->post('event_id');
 			$s_info = array();
 			if (!$s_info = $this->mstudents->getbycode($this->input->post('student_id'))) {
 				// code...
@@ -78,37 +77,56 @@ class Attendance extends MY_Controller
 					}
 				}
 
+
+				$event_info = $this->mevents->info($event_id);
+
+				switch ($event_info->has_afternoon) {
+					case 1:
+						// code...
+					$result = $this->morning();
+						break;
+					
+					case 2:
+						// code...
+					$result = $this->afternoon();
+						break;
+					default:
+						// code...
+					$result = $this->wholeday();
+						break;
+				}
+				echo json_encode($result);
+
+				exit;
 			}
 
+		}
+				echo json_encode(array('status'=>false,'msg'=>'No input received.'));
 
-			if ($this->input->post('in_out_type') == 2) {
-				// code...
-				$this->record_afternoon();
-				exit();
-			}
-
-			$find = array(
-
-					'event_id'=>$this->input->post('event_id'),
-					'student_id'=>$this->input->post('student_id'),
-					'event_day'=>$this->input->post('event_day'),
-					'time_in_type'=>$this->input->post('in_out_type'),
+	}
+	private function morning()
+	{
+	
+			$event_id = $this->input->post('event_id');
+			$student_id = $this->input->post('student_id');
+			$in_out_type = $this->input->post('in_out_type');
+			$finddata = array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'time_in_type'=>$in_out_type,
 			);
-
-				$list_attendance = $this->mattendance->get_list($this->input->post('event_id'),date('Y-m-d'));
-
-				$record_id = 0;
-			if ($find = $this->mattendance->find($find)) {
+			$is_late = 0;
+			$find = null;
+			if ($find = $this->mattendance->find($finddata)) {
 				// code...
-				$record_id = $find->id;
 				if ($this->input->post('in_out') == 'in') {
 					// code...	
-						echo json_encode(array('status'=>false,'msg'=>'Already time in!','data'=>$list_attendance));
+						echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
 						exit();
 				}else{
 					if ($find->timeout !== null) {
 						// code...
-						echo json_encode(array('status'=>false,'msg'=>'Already time out!','data'=>$list_attendance));
+						echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
 						exit();
 
 					}
@@ -116,238 +134,521 @@ class Attendance extends MY_Controller
 			}
 
 			$settings = $this->mcollections->settings();
-			$event_info = $this->mevents->info($this->input->post('event_id'));
+
+			$event_info = $this->mevents->info($event_id);
 
 
+			$event_start = $event_info->event_startdate.' '.$event_info->morning_timein;
+			$event_end = strtotime($event_info->event_enddate.' '.$event_info->morning_timeout);
 
-			$time_start = date('H:i:s',strtotime($event_info->morning_timein));
-
-			$event_start = $event_info->event_startdate.' '.$time_start;
-			$event_end = strtotime($event_info->event_enddate.' '.$event_info->afternoon_timeout);
 			$current_datetime = strtotime(date('Y-m-d H:i:s'));
-			$is_late =0;
-			$late_penalty_minutes = isset($settings->late_penalty_minutes) ? $settings->late_penalty_minutes : 30;
+
+			$late_penalty_minutes = isset($settings->late_penalty_minutes) ? $settings->late_penalty_minutes.' minutes' : '30 minutes';
+				
 			
-			$time_inout = $this->input->post('in_out');
+
+		$time_inout = $this->input->post('in_out');
+				
 
 		if ($time_inout =='in') {
 				// code...
-
-				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes.' minutes'));
-			//echo "$a_lateminutes = $current_datetime";
+				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes));
+			
 				if ($current_datetime > $a_lateminutes) {
 					// code...
 					$is_late = 1;
 				}
-			}
 
 			$current_time = date('Y-m-d H:i:s');
 
 			$result = false;
 
-			if ($time_inout == 'in') {
+				$data =array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'timein'=>date('Y-m-d H:i:s'),
+					'date_of_event'=>date('Y-m-d'),
+					'event_day'=>$this->input->post('event_day'),
+					'time_in_type'=>$in_out_type,
+					'penalty_late'=>$is_late
+				);
+				$result = $this->mattendance->add($data);
+			
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+				echo json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+			}else{
+				echo json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+			}
+			exit;
+
+			}
+
+
+			if ($time_inout == 'out') {
+
+
 				// code...
+				if (!empty($find)) {
+					// code...
+					$data =  new stdClass();
+					$data->timeout = date('Y-m-d H:i:s');
+					$data->penalty_late = 0;
+
+					if ($find->timein == null) {
+						// code...
+					$data->penalty_late = 1;
+					} 
+
+					$result = $this->mattendance->timeout($event_id,$student_id,$data);
+
+				}else{
 
 				$data =array(
 					'event_id'=>$this->input->post('event_id'),
 					'student_id'=>$this->input->post('student_id'),
-					'timein'=>date('Y-m-d H:i:s'),
+					'timeout'=>date('Y-m-d H:i:s'),
 					'date_of_event'=>date('Y-m-d'),
 					'event_day'=>$this->input->post('event_day'),
 					'time_in_type'=>$this->input->post('in_out_type'),
-					'penalty_late'=>$is_late
-				);
-				$result = $this->mattendance->add($data);
-			}else{
-					// code...
-					$data =array(
-						'id'=>$record_id,
-						'event_id'=>$this->input->post('event_id'),
-						'student_id'=>$this->input->post('student_id'),
-						'timeout'=>date('Y-m-d H:i:s'),
-						'date_of_event'=>date('Y-m-d'),
-						'event_day'=>$this->input->post('event_day'),
-						'time_in_type'=>$this->input->post('in_out_type'),
-					);
-					//echo json_encode($record_id);
-					//echo json_encode($data);
-					//exit;
-					$result = $this->mattendance->update((object)$data);
+					'penalty_late'=>1
+				);					
+					$result = $this->mattendance->add($data);
+
+				}
+
+
+
+			
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+					echo json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+				}else{
+					echo json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+
 				}
 			}
-			if(!empty($result)){
-				$tabledata = $this->mattendance->get_list($data['event_id'],$data['date_of_event']);
-				echo json_encode(array('status'=>true,'msg'=>'Successfully save!','data'=>$tabledata));
-
-			}else{
-				echo json_encode(array('status'=>false,'msg'=>'Error! Please try again!'));
-			}
-
+			exit;
 
 	}
-
-	public function record_afternoon($value='')
+	private function afternoon()
 	{
-		// code...
-		if ($this->input->post()) {
-			// code...
-			$find = array(
-
-					'event_id'=>$this->input->post('event_id'),
-					'student_id'=>$this->input->post('student_id'),
-					'event_day'=>$this->input->post('event_day'),
-					'time_in_type'=>$this->input->post('in_out_type'),
+			$event_id = $this->input->post('event_id');
+			$student_id = $this->input->post('student_id');
+			$in_out_type = $this->input->post('in_out_type');
+			$finddata = array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'time_in_type'=>$in_out_type,
 			);
-				$list_attendance = $this->mattendance->get_list($this->input->post('event_id'),date('Y-m-d'));
-				$record_id = 0;
-			if ($find = $this->mattendance->find($find)) {
+			$is_late = 0;
+			$find = null;
+			if ($find = $this->mattendance->find($finddata)) {
 				// code...
-				$record_id = $find->id;
 				if ($this->input->post('in_out') == 'in') {
 					// code...	
-						echo json_encode(array('status'=>false,'msg'=>'Already time in!','data'=>$list_attendance));
+						echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
 						exit();
 				}else{
 					if ($find->timeout !== null) {
 						// code...
-						echo json_encode(array('status'=>false,'msg'=>'Already time out!','data'=>$list_attendance));
+						echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
 						exit();
 
 					}
 				}
 			}
 
-			//var_dump($record_id);
-
-			//exit;
-
 			$settings = $this->mcollections->settings();
-			$event_info = $this->mevents->info($this->input->post('event_id'));
 
-			$time_start = date('H:i:s',strtotime($event_info->afternoon_timein));
-			$time_out = date('H:i:s',strtotime($event_info->afternoon_timeout));
-			$event_start = $event_info->event_startdate.' '.$time_start;
+			$event_info = $this->mevents->info($event_id);
+
+
+			$event_start = $event_info->event_startdate.' '.$event_info->afternoon_timein;
 			$event_end = strtotime($event_info->event_enddate.' '.$event_info->afternoon_timeout);
+
 			$current_datetime = strtotime(date('Y-m-d H:i:s'));
-			$is_late =0;
-			$late_penalty_minutes = isset($settings->late_penalty_minutes) ? $settings->late_penalty_minutes : 30;
+
+			$late_penalty_minutes = isset($settings->late_penalty_minutes) ? $settings->late_penalty_minutes.' minutes' : '30 minutes';
 				
-			$time_inout = $this->input->post('in_out');
+			
+
+		$time_inout = $this->input->post('in_out');
+				
 
 		if ($time_inout =='in') {
 				// code...
-				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes.' minutes'));
+				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes));
 			
 				if ($current_datetime > $a_lateminutes) {
 					// code...
 					$is_late = 1;
 				}
-			}
+
 			$current_time = date('Y-m-d H:i:s');
 
 			$result = false;
-			if ($time_inout == 'in') {
+
+				$data =array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'timein'=>date('Y-m-d H:i:s'),
+					'date_of_event'=>date('Y-m-d'),
+					'event_day'=>$this->input->post('event_day'),
+					'time_in_type'=>$in_out_type,
+					'penalty_late'=>$is_late
+				);
+				$result = $this->mattendance->add($data);
+			
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+				echo json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+			}else{
+				echo json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+			}
+			exit;
+
+			}
+
+
+			if ($time_inout == 'out') {
+
+
 				// code...
+				if (!empty($find)) {
+					// code...
+					$data =  new stdClass();
+					$data->timeout = date('Y-m-d H:i:s');
+					$data->penalty_late = 0;
+
+					if ($find->timein == null) {
+						// code...
+					$data->penalty_late = 1;
+					} 
+
+					$result = $this->mattendance->timeout($event_id,$student_id,$data);
+
+				}else{
 
 				$data =array(
 					'event_id'=>$this->input->post('event_id'),
 					'student_id'=>$this->input->post('student_id'),
-					'timein'=>date('Y-m-d H:i:s'),
+					'timeout'=>date('Y-m-d H:i:s'),
 					'date_of_event'=>date('Y-m-d'),
 					'event_day'=>$this->input->post('event_day'),
 					'time_in_type'=>$this->input->post('in_out_type'),
+					'penalty_late'=>1
+				);					
+					$result = $this->mattendance->add($data);
+
+				}
+
+
+
+			
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+					echo json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+				}else{
+					echo json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+
+				}
+			}
+			exit;
+
+	}
+
+	private function wholeday()
+	{
+		$in_out_type = $this->input->post('in_out_type');
+		if ($in_out_type == 1) {
+			// code...
+			$this->record_am();
+		}else{
+			$this->record_pm();
+		}
+	}
+	private function record_am(){
+
+			$event_id = $this->input->post('event_id');
+			$student_id = $this->input->post('student_id');
+			$in_out_type = $this->input->post('in_out_type');
+			$finddata = array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id
+			);
+			$is_late = 0;
+			$find = null;
+			if ($find = $this->mattendance->find($finddata)) {
+				// code...
+				if ($this->input->post('in_out') == 'in') {
+					// code...	
+						echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
+						exit();
+				}else{
+					if ($find->timeout !== null) {
+						// code...
+						echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
+						exit();
+
+					}
+				}
+			}
+
+			$settings = $this->mcollections->settings();
+
+			$event_info = $this->mevents->info($event_id);
+
+
+			$event_start = $event_info->event_startdate.' '.$event_info->morning_timein;
+			$event_end = strtotime($event_info->event_enddate.' '.$event_info->morning_timeout);
+
+			$current_datetime = strtotime(date('Y-m-d H:i:s'));
+
+			$late_penalty_minutes = isset($settings->late_penalty_minutes) ? $settings->late_penalty_minutes.' minutes' : '30 minutes';
+				
+			
+
+		$time_inout = $this->input->post('in_out');
+				
+
+		if ($time_inout =='in') {
+				// code...
+				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes));
+			
+				if ($current_datetime > $a_lateminutes) {
+					// code...
+					$is_late = 1;
+				}
+
+			$current_time = date('Y-m-d H:i:s');
+
+			$result = false;
+
+				$data =array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'timein'=>date('Y-m-d H:i:s'),
+					'date_of_event'=>date('Y-m-d'),
+					'event_day'=>$this->input->post('event_day'),
+					'time_in_type'=>0,
 					'penalty_late'=>$is_late
 				);
 				$result = $this->mattendance->add($data);
+			
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+				return json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
 			}else{
+				return json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+			}
+
+			}
+
+
+			if ($time_inout == 'out') {
+
+
+				// code...
+				if (!empty($find)) {
 					// code...
-					$data =array(
-						'id'=>$record_id,
-						'event_id'=>$this->input->post('event_id'),
-						'student_id'=>$this->input->post('student_id'),
-						'timeout'=>date('Y-m-d H:i:s'),
-						'date_of_event'=>date('Y-m-d'),
-						'event_day'=>$this->input->post('event_day'),
-						'time_in_type'=>$this->input->post('in_out_type'),
-					);
-					//echo json_encode($record_id);
-					//echo json_encode($data);
-					//exit;
-					$result = $this->mattendance->update((object)$data);
+					$data =  new stdClass();
+					$data->timeout = date('Y-m-d H:i:s');
+					$data->penalty_late = 0;
+
+					if ($find->timein == null) {
+						// code...
+					$data->penalty_late = 1;
+					} 
+
+					$result = $this->mattendance->timeout($event_id,$student_id,$data);
+
+				}else{
+
+				$data =array(
+					'event_id'=>$this->input->post('event_id'),
+					'student_id'=>$this->input->post('student_id'),
+					'timeout'=>date('Y-m-d H:i:s'),
+					'date_of_event'=>date('Y-m-d'),
+					'event_day'=>$this->input->post('event_day'),
+					'time_in_type'=>0,
+					'penalty_late'=>1
+				);					
+					$result = $this->mattendance->add($data);
+
+				}
+
+
+
+			
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+					return json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+				}else{
+					return json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+
 				}
 			}
-			if(!empty($result)){
-				
 
-				$tabledata = $this->mattendance->get_list($data['event_id'],$data['date_of_event']);
-				echo json_encode(array('status'=>true,'msg'=>'Successfully save!','data'=>$tabledata));
 
-			}else{
-				echo json_encode(array('status'=>false,'msg'=>'Error! Please try again!'));
+	}
+	private function record_pm(){
+
+			$event_id = $this->input->post('event_id');
+			$student_id = $this->input->post('student_id');
+			$in_out_type = $this->input->post('in_out_type');
+
+			$finddata = array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id
+			);
+			$is_late = 0;
+			$find = $this->mattendance->find($finddata);
+			$settings = $this->mcollections->settings();
+
+			$event_info = $this->mevents->info($event_id);
+
+
+			$event_start = $event_info->event_startdate.' '.$event_info->morning_timein;
+			$event_end = strtotime($event_info->event_enddate.' '.$event_info->morning_timeout);
+
+			$current_datetime = strtotime(current_date());
+
+			$late_penalty_minutes = isset($settings->late_penalty_minutes) ? $settings->late_penalty_minutes.' minutes' : '30 minutes';
+
+			$time_inout = $this->input->post('in_out');
+			if (!empty($find)) {
+				// code...
+				if ($time_inout == 'in' && $find->pm_in !== null) {
+					// code...
+					echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
+					exit;		
+				}
+
+				if ($time_inout == 'out' && $find->pm_out !== null) {
+					// code...
+					echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
+					exit;		
+				}
+			}
+
+
+			if ($time_inout == 'in') {
+				// code...
+
+				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes));
+			
+				if ($current_datetime > $a_lateminutes) {
+					// code...
+					$is_late = 1;
+				}
+				$data = new stdClass();
+				$data->penalty_late = $is_late;
+				$data->pm_in = current_date();
+
+				if (!empty($find)) {
+					// code...
+					$result = $this->mattendance->timein($event_id,$student_id,$data);
+				}else{
+	
+				$data =array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'pm_in'=>current_date(),
+					'date_of_event'=>date('Y-m-d'),
+					'event_day'=>$this->input->post('event_day'),
+					'time_in_type'=>0,
+					'penalty_late'=>1
+				);					
+					$result = $this->mattendance->add($data);
+
+				}
+
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+					echo json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+				}else{
+					echo json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+
+				}
+			exit;
+
+			}
+
+			if ($time_inout == 'out') {
+				// code...
+
+				$a_lateminutes = strtotime($event_start.('+'.$late_penalty_minutes));
+			
+				if ($current_datetime > $a_lateminutes) {
+					// code...
+					$is_late = 1;
+				}
+				$data = new stdClass();
+				$data->penalty_late = $is_late;
+				$data->pm_out = current_date();
+
+				if (!empty($find)) {
+					// code...
+					if ($find->pm_in == null) {
+						// code...
+						$data->penalty_late = 1;
+					}
+					$result = $this->mattendance->timeout($event_id,$student_id,$data);
+				}else{
+	
+				$data =array(
+					'event_id'=>$event_id,
+					'student_id'=>$student_id,
+					'pm_out'=>current_date(),
+					'date_of_event'=>date('Y-m-d'),
+					'event_day'=>$this->input->post('event_day'),
+					'time_in_type'=>0,
+					'penalty_late'=>1
+				);					
+					$result = $this->mattendance->add($data);
+
+				}
+
+			if ($result == true) {
+							// code...
+				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+
+					echo json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+				}else{
+					echo json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+
+				}
+			exit;
+
 			}
 
 
 	}
-	public function create($value='')
+
+	public function end($value='')
 	{
 		// code...
-		if ($this->input->post()) {
-			// code...
-			//var_dump($this->input->post());
-
-			$data2add = new stdClass();
-			$data2add->event_title = $this->input->post('event_title');
-			$data2add->event_startdate = $this->input->post('event_startdate');
-			$data2add->event_timestart = $this->input->post('event_timestart');
-			$data2add->event_enddate = $this->input->post('event_enddate');
-			$data2add->event_timeend = $this->input->post('event_timeend');
-			//echo "<pre/>";
-			//var_dump($this->input->post());
-
-
-			$this->load->model('events/mevents');
-
-			//if ($this->mevents->find(array('event_title'=>$data2add->event_title))) {
-			if ($this->mevents->find($data2add)) {
-				// code...
-				echo json_encode(recordexist());
-				exit();
-			}
-			$result = $this->mevents->add($data2add);
-			var_dump($result);
-			exit();	
-		}
-		
-		$data = new stdClass();
-		$data->content = 'events/create';
-		$this->template->load($this->theme,$data);
 	}
-	public function listname($value='')
+	public function cancel($value='')
 	{
 		// code...
-		$postdata = $this->input->post();
-
-		$postdata['keywords'] = trim(metaphone($postdata['fName']).' '.metaphone($postdata['lName']));
-
-		$names =$this->mpersonal->like($postdata);
-
-		//echo json_encode($names);
-		//exit;
-		$data = array();
-		$status = false;
-		if ($names) {
-			// code...
-			foreach ($names as $key => $name) {
-				// code...
-				$data[] = array(
-					'id'=>$name->id,
-					'name'=>$name->fName.' '.$name->mName.' '.$name->lName,
-				);
-    		}
-			$status = true;
-		}
-		echo json_encode(array('status'=>$status,'data'=>$data,'like'=>$postdata));
 	}
+
+	//end class
+
 }
-
- ?>

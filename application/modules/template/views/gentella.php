@@ -53,9 +53,6 @@
 
     <link href="<?=base_url()?>/template/gentelella/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css"></link>
 
-    <!-- notify -->
-    <link href="<?=base_url()?>/template/gentelella/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
-    <link href="<?=base_url()?>/template/gentelella/vendors/pnotify/dist/pnotify.mobile.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="<?=base_url()?>/template/gentelella/build/css/custom.min.css" rel="stylesheet">
 
@@ -68,7 +65,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><img src="<?=base_url('assets/img/org-logo-sidebar.png')?>"></a>
+              <a href="<?=site_url()?>" class="site_title"><img src="<?=base_url('assets/img/org-logo-sidebar.png')?>"></a>
             </div>
 
             <div class="clearfix"></div>
@@ -101,7 +98,7 @@
                   <li><a><i class="fa fa-edit"></i> Students Library <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="<?=site_url('students')?>">List of all student</a></li>
-                      <li><a href="<?=site_url('students/register')?>">New register</a></li>
+                      <li><a href="<?=site_url('students/register')?>">Show  online registration</a></li>
                       <?php if (!empty($sidebar_course)): ?>
                         <?php foreach ($sidebar_course as $key => $value): ?>
                       <li><a href="<?=site_url('students/course/'.$value)?>"><?=strtoupper($value)?></a></li>
@@ -287,7 +284,7 @@
   <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <!-- jQuery Smart Wizard -->
-    <script src="<?=base_url()?>/template/gentelella/vendors/pnotify/dist/pnotify.js"></script>
+    <script src="<?=assets_url()?>plugins/notify/notify.js"></script>
 
     <!-- bootstrap-daterangepicker -->
     <script src="<?=base_url()?>/template/gentelella/vendors/moment/min/moment.min.js"></script>

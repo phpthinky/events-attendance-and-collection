@@ -126,6 +126,27 @@
   $this->aauth->create_perm('Attendance Officer','The one who has permission to check the attendance of the students');
   $this->aauth->create_perm('Collection Officer','The one who has permission to collect payment from the students');
     
+    $profile = glob(UPLOADPATH.'/profile/*'); // get all file names
+
+      foreach($profile as $file){ // iterate files
+        if(is_file($file)) {
+          unlink($file); // delete file
+        }
+      }
+
+    $destinations = glob(UPLOADPATH.'/logo/*'); // get all file names
+      foreach($destinations as $file){ // iterate files
+        if(is_file($file)) {
+          unlink($file); // delete file
+        }
+      }
+
+    $booking = glob(UPLOADPATH.'/qrcode/*'); // get all file names
+      foreach($booking as $file){ // iterate files
+        if(is_file($file)) {
+          unlink($file); // delete file
+        }
+      }
   }
 
  } ?>

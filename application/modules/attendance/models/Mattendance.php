@@ -22,10 +22,36 @@ class Mattendance extends CI_Model
 		$this->db->where('id',$data->id);
 		return $this->db->update('events_attendance',$data);
 	}
+
+	public function timein($event_id=0,$student_id=0,$data=false)
+	{
+		// code...
+		$this->db->where('event_id',$event_id);
+		$this->db->where('student_id',$student_id);
+		return $this->db->update('events_attendance',$data);
+	}
+	
+	public function timeout($event_id=0,$student_id=0,$data=false)
+	{
+		// code...
+		$this->db->where('event_id',$event_id);
+		$this->db->where('student_id',$student_id);
+		return $this->db->update('events_attendance',$data);
+	}
 	public function find($data='')
 	{
 		// code...
 		return $this->db->get_where('events_attendance',$data)->row(0);
+	}
+	public function check($event_id=0,$student_id='',$type=0)
+	{
+		// code...
+		$this->db->where('student_id',$student_id);
+		$this->db->where('event_id',$event_id);
+		$this->db->where('in_out_type',$type);
+		$this->db->limit(1);
+		return $this->db->get('events_attendance')->row(0);
+
 	}
 	public function list($data='')
 	{

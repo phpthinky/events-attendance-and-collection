@@ -20,7 +20,7 @@ $(function(){
             })
     })
 //table filter
-var table =  $('table').DataTable();
+var table =  $('table#table-balance-sheet').DataTable();
 
     $('#select-year-id').on('change',function(){
         $('#select-course-id').trigger('change');
@@ -62,7 +62,7 @@ var table =  $('table').DataTable();
 
 
 //scanner
-var resultContainer = document.getElementById('qr-reader-results');
+//var resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
 
 function onScanSuccess(decodedText, decodedResult) {
@@ -70,9 +70,9 @@ function onScanSuccess(decodedText, decodedResult) {
         ++countResults;
         lastResult = decodedText;
         console.log(decodedText);
-        var qrcode_result = JSON.parse(decodedText);
-        var student_id = qrcode_result[0];
-            var info = JSON.parse(qrcode_result[1])
+        var qrcode_result = decodedText.split('/');
+        var student_id = qrcode_result[7];
+            //var info = JSON.parse(qrcode_result[1])
            // console.log(info)
             var table_body = $('#table-attendees tbody');
 

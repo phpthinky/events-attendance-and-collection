@@ -24,11 +24,11 @@ $(function(){
 		e.preventDefault()
 
 		var formdata = $(this).serializeObject();
-		console.log(formdata)
+		//console.log(formdata)
 
 		if (formdata.attendees_course == undefined || formdata.attendees_year == undefined ) {
 
-			alert('Please select event attendees!')
+			$.notify('Please select event attendees!')
 			return false;
 		}
 		
@@ -40,8 +40,11 @@ $(function(){
 			success:
 			function(response){
 				console.log(response)
-				if (response.msg !== undefined) {
-				notify(response)
+				if (response.status == true) {
+				$.notify(response.msg,'success')
+
+				}else{
+				$.notify(response.msg)
 
 				}
 			},
@@ -61,7 +64,7 @@ $(function(){
 
 		$('#event_enddate').text(tomdy(ndate))
 	})
-
+ 	
 	$('#e_event_startdate').on('change',function(){
 		var date = $(this).val();
 		$('#event_enddate').text(tomdy(date))
@@ -116,8 +119,9 @@ $(function(){
 				console.log(response)
 				if (response.status == true) {
 					$(tr).remove()
+
 				}
-				notify(response)
+				$.notify(response.msg,'warning')
 			},
 			error:
 			function (i,e) {
@@ -130,4 +134,28 @@ $(function(){
 
 			}
 	})
+
+
+	$('select[name="has_afternoon"]').on('change',function(){
+		let val = $(this).val();
+		$('.time-in').addClass('d-none')
+		if (val == 1) {
+			$('.morning').removeClass('d-none')
+			$('.afternoon').addClass('d-none')
+		}
+
+		if (val == 2) {
+			$('.afternoon').removeClass('d-none')
+			$('.morning').addClass('d-none')
+		}
+
+		if (val == 0) {
+			$('.morning').removeClass('d-none')
+			$('.afternoon').removeClass('d-none')
+		}
+	})
+	$('select[name="has_afternoon"]').trigger('change')
+
+
+	//end onload
 })

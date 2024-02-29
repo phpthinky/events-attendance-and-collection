@@ -161,7 +161,8 @@
   <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <!-- jQuery Smart Wizard -->
-    <script src="<?=base_url()?>/template/gentelella/vendors/pnotify/dist/pnotify.js"></script>
+    <script src="<?=assets_url()?>plugins/notify/notify.js"></script>
+    
 
     <!-- bootstrap-daterangepicker -->
     <script src="<?=base_url()?>/template/gentelella/vendors/moment/min/moment.min.js"></script>

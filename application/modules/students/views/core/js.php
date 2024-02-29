@@ -195,9 +195,9 @@ function onScanSuccess(decodedText, decodedResult) {
         ++countResults;
         lastResult = decodedText;
         console.log(decodedText);
-        var qrcode_result = JSON.parse(decodedText);
-        var student_id = qrcode_result[0];
-            var info = JSON.parse(qrcode_result[1])
+        var qrcode_result = decodedText.split('/');
+        var student_id = qrcode_result[7];
+            //var info = JSON.parse(qrcode_result[1])
            // console.log(info)
             var table_body = $('#table-attendees tbody');
 
@@ -278,4 +278,63 @@ $('#form-quick-info').on('submit',function(e){
 
 })
 
+
+
+$('#btn-approved').on('click',function(){
+	let formdata = {};
+	let tr = $(this).closest('tr');
+	formdata.student_id = $(this).data('id');
+	formdata.action = 'approved';
+	 $.ajax({
+                url:'<?=current_url()?>',
+                data:formdata,
+                method:'POST',
+                dataType:'json',
+                success:function(response){
+                	console.log(response.status)
+                	if(response.status == true){
+						$(tr).remove()
+                		$.notify(response.msg,'success')
+
+                	}else{
+                		$.notify(response.msg)
+                	}
+                },
+                error:function(i,e){
+                    console.log(i.responseText)
+                }
+            })
+
+
+})
+
+$('#btn-disapproved').on('click',function(){
+	let formdata = {};
+	let tr = $(this).closest('tr');
+	formdata.student_id = $(this).data('id');
+	formdata.action = 'disapproved';
+
+	 $.ajax({
+                url:'<?=current_url()?>',
+                data:formdata,
+                method:'POST',
+                dataType:'json',
+                success:function(response){
+                	console.log(response)
+                	if(response.status == true){
+                		$.notify(response.msg,'success')
+
+                	}else{
+						$(tr).remove()
+
+                		$.notify(response.msg)
+                	}
+                },
+                error:function(i,e){
+                    console.log(i.responseText)
+                }
+            })
+})
+
+//edn onload
 })

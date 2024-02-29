@@ -11,10 +11,10 @@
 		<div class="col-md-3">
 			<div class="card">
 				<div class="card-body h-200">
-					<label><i class="fa fa-users"></i> Enrollment count</label>
+					<label><i class="fa fa-users"></i> Student count</label>
 					<hr>
 					<center>
-						<h1><?=$total_students?></h1>
+						<h1><a href="<?=site_url('students')?>"><?=$total_students?></a></h1>
 					<span>Students</span></center>
 				</div>
 			</div>
@@ -82,7 +82,7 @@
 					<label><i class="fa fa-users"></i> Recents Accounts</label>
 					<hr>
 					<center>
-						<h1>0</h1>
+						<h1><a href="<?=site_url('students/register')?>"><?=$new_accounts?></a></h1>
 					<span>User</span></center>
 
 				</div>

@@ -7,43 +7,14 @@ function onScanSuccess(decodedText, decodedResult) {
         ++countResults;
         lastResult = decodedText;
         console.log(decodedText);
-        var qrcode_result = JSON.parse(decodedText);
-        var student_id = qrcode_result[0];
-            var info = JSON.parse(qrcode_result[1])
-           // console.log(info)
-            /*var table_body = $('#table-attendees tbody')
-                $(table_body).prepend(
-                    $('<tr/>').append(
-                        $('<td/>').text(student_id)
-                        ).append(
-                        $('<td/>').text(info.name)
-
-                        ).append(
-                        $('<td/>').addClass('time-in-'+student_id)
-                        
-                        ).append(
-                        $('<td/>').addClass('time-out-'+student_id)
-                        
-                        ).data('student_id',student_id)
-                    );
-                */
+      //  var student_id = JSON.parse(decodedText);
+        //var student_id = result.STUDENT_ID;
+        var segment = decodedText.split('/');
+        var student_id = segment[7]; 
+        
+                       // var info = JSON.parse(qrcode_result[1])   
             var formdata = $('#form-time-in-out').serializeObject();
                 formdata.student_id = student_id;
-               /*
-                formdata.timeinout = $('input[name="in_out"]:checked').val();
-                formdata.event_id = '<?=isset($event_info->id) ? $event_info->id : 0?>';
-                formdata.current_time = '<?=date('Y-m-d H:i:s')?>';
-                */
-                console.log(formdata);
-                if (formdata.in_out == 'in') {
-                $('td.time-in-'+student_id).text(formdata.current_time)
-
-                }
-                if (formdata.in_out == 'out') {
-                $('td.time-out-'+student_id).text(formdata.current_time)
-                    
-                }
-//                return false;
 
              $.ajax({
                 url:'<?=site_url('attendance/record')?>',
@@ -51,10 +22,11 @@ function onScanSuccess(decodedText, decodedResult) {
                 method:'POST',
                 dataType:'json',
                 success:function(response){
-                    console.log(response)
+                    console.log(response.msg)
                     //if (response.data !== undefined) {
                         var table = $('table#table-attendees tbody');
                         $(table).html('')
+                       /*
                         $.each(response.data,function (i,d) {
                             // body...
                             $(table).append(
@@ -71,8 +43,16 @@ function onScanSuccess(decodedText, decodedResult) {
 
 
                         })
-                    //};
-                    notify(response)
+                        */
+                        $.notify(response.msg,'warning');
+/*
+                        if (response.status == true) {
+                            $.notify(response.msg,'success')
+                        }else{
+                            $.notify(response.msg)
+
+                        }
+                        */
                 },
                 error:function(i,e){
                     console.log(i.responseText)
@@ -93,7 +73,7 @@ $('#start-scanner').on('click',function (e) {
 	
 })
 
-current_time();
+//current_time();
 
 
 })
@@ -163,6 +143,9 @@ $(function(){
             }
     })
 
+    $('input[name="in_out"]').on('click',function(){
+        lastResult = ''; 
+    })
 
 
     $('#btn-cancel-event').on('click',function() {

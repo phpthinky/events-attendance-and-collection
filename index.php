@@ -309,6 +309,7 @@ switch (ENVIRONMENT)
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
 	define('UPLOADPATH', 'assets'.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR);
+	define('DS', DIRECTORY_SEPARATOR);
 
 /*
  * --------------------------------------------------------------------

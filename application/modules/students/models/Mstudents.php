@@ -48,6 +48,23 @@ class Mstudents extends CI_Model
 		$this->db->where('code',$data->code);
 		return $this->db->update('students',$data);
 	}
+	public function approved($student_id='')
+	{
+		$this->db->set('status',1);
+		$this->db->where('student_id',$student_id);
+		$this->db->update('course_students');
+		return $this->db->error();
+	}
+
+	public function remove($student_id='')
+	{
+		$this->db->where('code',$student_id);
+		$this->db->delete('students');
+
+		$this->db->where('student_id',$student_id);
+		$this->db->delete('course_students');
+
+	}
 	public function find($data='')
 	{
 		// code...

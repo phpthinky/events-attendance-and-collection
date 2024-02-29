@@ -90,7 +90,7 @@ class Events extends MY_Controller
 			
 			}
 
-			$data->has_afternoon = $has_afternoon;
+			$data2add->has_afternoon = $has_afternoon;
 
 			$data2add->late = $this->input->post('late');
 			$data2add->absent = $this->input->post('absent');
@@ -138,21 +138,12 @@ class Events extends MY_Controller
 				if (in_array(false,$result)) {
 					// code...
 				echo json_encode(array('status'=>false,'msg'=>'Some event days may not added.'));
+				exit;
 
 				}else{
 				echo json_encode(array('status'=>true,'msg'=>'Successfully added.'));
-
+				exit;
 				}
-			//}
-			/*
-			if($result = $this->mevents->add($data2add)){
-				echo json_encode(array('status'=>true,'msg'=>'Successfully added.'));
-
-			}else{
-				echo json_encode(array('status'=>false,'msg'=>'No event was added.'));
-			}
-			*/
-			//var_dump($result);
 			exit();	
 		}
 
@@ -194,7 +185,7 @@ class Events extends MY_Controller
 			
 			}
 
-			$data->has_afternoon = $has_afternoon;
+			$data2add->has_afternoon = $has_afternoon;
 
 
 			$data2add->status = $this->input->post('status');
@@ -298,7 +289,8 @@ class Events extends MY_Controller
 			// code...
 			if($this->mevents->update($this->input->post('event_id'),array('status'=>2,'date_completed'=>date('Y-m-d H:i:s')))){
 				$info = $this->mevents->info($this->input->post('event_id'));
-				var_dump($info); 
+				//var_dump($info);
+
 				$absents = array();
 				if($absents = $this->mevents->list_absents($this->input->post('event_id'),$year_id,$semester)){
 						 	
@@ -314,6 +306,7 @@ class Events extends MY_Controller
 					}
 				}	 	
 
+
 				$late_list = array();
 				if($late_list = $this->mevents->list_late($this->input->post('event_id'))){
 					foreach ($late_list as $key => $value) {
@@ -327,6 +320,7 @@ class Events extends MY_Controller
 						$this->mevents->set_late_penalty($late);
 					}
 				}
+
 				echo json_encode(array('status'=>true,'msg'=>'Event was stopped.'));
 			}else{
 				echo json_encode(array('status'=>false,'msg'=>'Event wasn\'t stop.'));

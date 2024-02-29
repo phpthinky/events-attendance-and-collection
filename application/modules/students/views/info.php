@@ -14,58 +14,57 @@
 					<div class="tab-pane active" id="tab-family">
 						
 						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-6 col-sm-6 print-6">
 						Students Details
 						<hr>
 
 						<div class="qr-code">
 
 						<div class="row">
-							<a class="btn btn-outline-success btn-sm" href="<?=base_url('assets/img/'.$info->code.'.png')?>" download="<?=isset($info) ? $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext.'.png' : 'my_qr_code.png' ?>">Download QR code</a>
+							<a class="btn btn-outline-success btn-sm" href="<?=base_url('assets/img/qrcode/'.$info->code.'.png')?>" download="<?=isset($info) ? $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext.'.png' : 'my_qr_code.png' ?>">Download QR code</a>
 						</div>	
-							<?=isset($info) ? '<img src="'.base_url('assets/img/').$info->code.'.png"/>' : '' ?>
+							<?=isset($info) ? '<img src="'.base_url('assets/img/qrcode/').$info->code.'.png"/>' : '' ?>
 								
 							</div>	
-          <div class="table-responsive">
-
-          	<table class="table table-hovered">
-          		<tr>
-          			<td>Name</td>
-          			<td><?=isset($info) ? $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext : '' ?></td>
-          		</tr>
-          		<tr>
-          			<td>Course</td>
-          			<td><?=isset($info) ? $info->course_sub_title : '' ?></td>
-          		</tr><tr>
-          			<td>Year & Section</td>
-          			<td><?=isset($info) ? $info->grade.'-'.$info->section : '' ?></td>
-          		</tr><tr>
-          			<td>Address</td>
-          			<td><?=isset($info) ? $info->address1 : '' ?></td>
-          		</tr><tr>
-          			<td>Contact number</td>
-          			<td><?=isset($info) ? $info->contact_no: '' ?></td>
-          		</tr>
-          		<tr>
-          			<td>Email</td>
-          			<td><?=isset($info) ? $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext : '' ?></td>
-          		</tr>
-
-          		<tr>
-          			<td>Last sy enroll</td>
-          			<td><?=isset($info) ? $info->sy : '' ?></td>
-          		</tr>
-
-          		<tr>
-          			<td>Last semester enroll</td>
-          			<td>Semester <?=isset($info) ? $info->semester : '' ?></td>
-          		</tr>
-          	</table>
-          </div>
+         
 							</div>
+							<div class="col-md-6 col-sm-6 print-6">
+							
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Name</label><span class="text-description"><?=isset($info) ? $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext : '' ?></span></div>
+								</div>
 
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Course</label><span class="text-description"><?=isset($info) ? $info->course_sub_title : '' ?></span></div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Year & Section</label><span class="text-description"><?=isset($info) ? $info->grade.'-'.$info->section : '' ?></span></div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Address</label><span class="text-description"><?=isset($info) ? $info->address1 : '' ?></span></div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Contact</label><span class="text-description"><?=isset($info) ? $info->contact_no: '' ?></span></div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Email</label><span class="text-description"><?=isset($info->email) ? $info->email: '' ?></span></div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">School year</label><span class="text-description"><?=isset($info) ? $info->sy : '' ?> Semester <?=isset($info) ? $info->semester : '' ?></span></div>
+								</div>
+
+
+								<div class="row">
+									<div class="col-md-12"><label class="text-title">Semester</label><span class="text-description"><?=isset($info) ? $info->semester : '' ?></span></div>
+								</div>
+							</div>
 							<!-- events attended -->
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<label>Event attended</label>
 								<hr>		
 								<div class="table-responsive">

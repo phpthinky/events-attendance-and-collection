@@ -69,10 +69,11 @@ function onScanSuccess(decodedText, decodedResult) {
     if (decodedText !== lastResult) {
         ++countResults;
         lastResult = decodedText;
-        console.log(decodedText);
-        var qrcode_result = JSON.parse(decodedText);
-        var student_id = qrcode_result[0];
-            var info = JSON.parse(qrcode_result[1])
+        //console.log(decodedText);
+        //var qrcode_result = JSON.parse(decodedText);
+        var result = decodedText.split('/')
+        var student_id = result[7];
+            //var info = JSON.parse(qrcode_result[1])
            // console.log(info)
             var table_body = $('#table-attendees tbody');
 

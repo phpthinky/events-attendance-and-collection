@@ -66,6 +66,16 @@ body{
 
 
 @media print{
+
+	.print-6{
+		width: 50%;
+		display: inline-block;
+	}
+	.print-12{
+	
+		width: 100%;
+		display: inline-block;
+	}
 	.print-header{
 		visibility: visible;
 	}

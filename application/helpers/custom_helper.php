@@ -102,13 +102,30 @@ if (!function_exists('toMMdY')) {
 }
 
 if (!function_exists('date_time')) {
-			function date_time($date){
+			function date_time($date,$am =false){
+
 					$date = strtotime($date);
+				if ($am) {
+					// code...
+				return date('Y-m-d h:i a',$date);
+
+				}	
 					return date('M d, Y H:i:s',$date);
 		
 		}
 }
 
+if (!function_exists('current_date')) {
+			function current_date($am=false){
+				if ($am) {
+					// code...
+				return date('Y-m-d h:i a');
+
+				}
+				return date('Y-m-d H:i:s');
+		
+		}
+}
 if (!function_exists('noinput')) {
 			function noinput(){
 		return array('status'=>false,'msg'=>'No input data.');

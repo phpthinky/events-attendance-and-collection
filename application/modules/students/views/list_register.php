@@ -23,9 +23,9 @@
 
                           <td><?=$value->course_sub_title?></td>
                           <td><?=$value->grade.'-'.$value->section?></td>
+                          <td><?=date_time($value->dateUpdated,true)?></td>
                           <td></td>
-                          <td></td>
-                          <td><a href="#" class="btn btn-sm btn-outline-success"><i class="fa fa-check"></i> Approve</a> <a href="#" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i>Disapprove</a></td>
+                          <td><a href="#" class="btn btn-sm btn-outline-success" data-id="<?=$value->code?>" id="btn-approved"><i class="fa fa-check"></i> Approve</a> <a href="#" class="btn btn-sm btn-outline-danger" data-id="<?=$value->code?>" id="btn-disapproved"><i class="fa fa-trash"></i>Disapprove</a></td>
                           <!--td><?php if ($total_penalty > $value->total_bayad): ?>
                             <a class="btn btn-outline-success btn-sm" href="#">Pay</a>
                           <?php endif ?></td-->

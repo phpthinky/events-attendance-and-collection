@@ -21,9 +21,9 @@ $(function(){
 			function(response){
 				console.log(response)
 				if (response.status == true) {
-					$().nSuccess(response.msg)
+					$.notify(response.msg,'success')
 				}else{
-					$().nError(response.msg)
+					$.notify(response.msg,'error')
 				}
 			},
 			error:

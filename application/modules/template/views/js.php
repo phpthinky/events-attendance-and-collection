@@ -67,10 +67,8 @@ $.fn.nSuccess = function(msg){
 	$(this).addClass('alert alert-success')
 	$(this).text(msg)
 	
-				        new PNotify({
-				            text: msg,
-				            addclass:'alert alert-success'
-				        });	
+		$.notify(msg,'msg')
+
 
 }
 $.fn.nError = function(msg){
@@ -79,72 +77,17 @@ $.fn.nError = function(msg){
 	$(this).addClass('alert alert-danger')
 	$(this).text(msg)
 	
-				        new PNotify({
-				            text: msg,
-				            addclass:'alert alert-warning'
-				        });	
+		$.notify(msg)
 }
 
 //end onload
 });
 
-  function notify(data,title) {
+  function notify(data,style) {
   	// body...
 
-  		if (data !== undefined) {
-  			tTitle = 'Success';
-  			fTitle = 'Error';
-  							if (data.msg !== undefined) {
-
-				  			if (data.status == true) {
-				  				if (title !== undefined) {
-				  					tTitle = title;
-				  				}
-				        new PNotify({
-				            title: tTitle,
-				            text: data.msg,
-				            addclass:'alert alert-success'
-				        });	
-				  			}else{
-
-				        new PNotify({
-				            title: fTitle,
-				            text: data.msg,
-				            addclass:'alert alert-warning'
-				        });
-				  			}
-  							}else{
-
-				  			if (data.status == true) {
-				  				if (title !== undefined) {
-				  					tTitle = title;
-				  				}
-				        new PNotify({
-				            title: tTitle,
-				            text: "Data successfully save.",
-				            addclass:'alert alert-success'
-				        });	
-				  			}else{
-
-				        new PNotify({
-				            title: fTitle,
-				            text: "Something went wrong!",
-				            addclass:'alert alert-warning'
-				        });
-				  			}
-
-  							}
-  		}else{
-
-        new PNotify({
-            title: "Notification",
-            text: "Unknown action was made.",
-            addclass:'alert alert-warning',
-            buttons:{
-            	close:true,
-            }
-        });
-  		}
+   		$.notify(data.msg,style)
+  	
   }
 
   function tomdy(ndate) {

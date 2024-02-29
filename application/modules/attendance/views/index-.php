@@ -14,31 +14,15 @@
 						<div class="row">
 							<div class="co-lg-4 col-md-4 col-xs-12">
 								<div class="row">
-									
 									<?php if (!empty($event_info)): ?>
+										
 									<label class="col-md-12">Name of event: <b><?=$event_info->event_title?></b></label>
+									<label class="col-md-12">Event start:  <b><?=toMMdy($event_info->event_startdate).' '.date('h:i a',strtotime($event_info->morning_timein))?></b></label>
+									<label class="col-md-12">Event end:  <b><?=toMMdy($event_info->event_enddate).' '.date('h:i a',strtotime($event_info->afternoon_timeout))?></b></label>
+
 									<label class="col-md-12">Day:  <b><?=$event_info->no_days?></b></label>
+
 									<label class="col-md-12">Attendee:  <b><?=implode(', ',$event_info->courses)?></b></label>
-								<hr>
-									<?php if ($event_info->has_afternoon == 0): ?>
-									<label class="col-md-12">Event start:  <b><?=toMMdy($event_info->event_startdate).' '.date('h:i a',strtotime($event_info->morning_timein))?></b></label>
-									<label class="col-md-12">Event end:  <b><?=toMMdy($event_info->event_enddate).' '.date('h:i a',strtotime($event_info->afternoon_timeout))?></b></label>	
-									<?php endif ?>
-									<?php if ($event_info->has_afternoon == 1): ?>
-
-									<label class="col-md-12">Event start:  <b><?=toMMdy($event_info->event_startdate).' '.date('h:i a',strtotime($event_info->morning_timein))?></b></label>
-									<label class="col-md-12">Event end:  <b><?=toMMdy($event_info->event_enddate).' '.date('h:i a',strtotime($event_info->morning_timeout))?></b></label>	
-										
-									<?php endif ?>
-
-									<?php if ($event_info->has_afternoon == 2): ?>
-
-									<label class="col-md-12">Event start:  <b><?=toMMdy($event_info->event_startdate).' '.date('h:i a',strtotime($event_info->afternoon_timein))?></b></label>
-									<label class="col-md-12">Event end:  <b><?=toMMdy($event_info->event_enddate).' '.date('h:i a',strtotime($event_info->afternoon_timeout))?></b></label>	
-										
-									<?php endif ?>
-
-
 									<?php endif ?>
 								</div>
 							</div>
@@ -49,16 +33,19 @@
 				        
 				    </div>
 				    <div class="col-md-4 col-xs-12">
-				    	<?php if (!empty($event_info)): ?>
-							<?php if ($event_info->has_afternoon == 0): ?>
-				    		<form id="form-time-in-out" method="POST">
-										
+				    	
+								<div class="row radio">
+									<form id="form-time-in-out" method="POST">
+
+										<?php if (!empty($event_info)): ?>
+											
 										<div class="d-none">
 											<input type="hidden" name="event_id" value="<?=isset($event_info->id) ? $event_info->id : 0?>">
 											<input type="hidden" name="event_day" value="<?=$event_info->no_days?>">
 											
 
 										</div>
+										<?php endif ?>
 
 									<label class="col-md-12"><input type="hidden" name="current_time" id="current_time" value="<?=date('Y-m-d H:i:s')?>"> <span id="current-time"><?=date('M d Y H:i:s')?></span></label>
 									<label class="col-md-12" style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out_type" value="1" id="morning" <?php if (date('H') < 12): ?> checked
@@ -71,49 +58,9 @@
 									<label class="col-md-12" style="padding: 5px;cursor: pointer;"><input type="radio" checked name="in_out" value="in"> TIME IN</label>
 									<label class="col-md-12"  style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out" value="out"> TIME OUT </label>
 									</form>
-				    		<?php endif ?>
-							<?php if ($event_info->has_afternoon == 1): ?>
-
-
-				    		<form id="form-time-in-out" method="POST">
-										
-										<div class="d-none">
-											<input type="hidden" name="event_id" value="<?=isset($event_info->id) ? $event_info->id : 0?>">
-											<input type="hidden" name="event_day" value="<?=$event_info->no_days?>">
-											
-
-										</div>
-
-									<label class="col-md-12"><input type="hidden" name="current_time" id="current_time" value="<?=date('Y-m-d H:i:s')?>"> <span id="current-time"><?=date('M d Y H:i:s')?></span></label>
-									<label class="col-md-12" style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out_type" value="1" id="morning" checked> MORNING</label>
 									<hr>
-									<label class="col-md-12" style="padding: 5px;cursor: pointer;"><input type="radio" checked name="in_out" value="in"> TIME IN</label>
-									<label class="col-md-12"  style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out" value="out"> TIME OUT </label>
-									</form>
-
-				    		<?php endif ?>
-
-							<?php if ($event_info->has_afternoon == 2): ?>
-
-
-				    		<form id="form-time-in-out" method="POST">
-										
-										<div class="d-none">
-											<input type="hidden" name="event_id" value="<?=isset($event_info->id) ? $event_info->id : 0?>">
-											<input type="hidden" name="event_day" value="<?=$event_info->no_days?>">
-											
-
-										</div>
-
-									<label class="col-md-12" style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out_type" value="2" value="afternoon"
-										checked> AFTERNOON </label>
-									<hr>
-									<label class="col-md-12" style="padding: 5px;cursor: pointer;"><input type="radio" checked name="in_out" value="in"> TIME IN</label>
-									<label class="col-md-12"  style="padding: 5px;cursor: pointer;"><input type="radio" name="in_out" value="out"> TIME OUT </label>
-									</form>
-
-				    		<?php endif ?>
-
+									
+									<?php if (!empty($event_info)): ?>
 										<?php if ($event_info->status == 1): ?>
 											
 									<div class="col-md-12"><button id="start-scanner" class="btn btn-outline-success btn-sm">Start scanner</button> <button id="btn-stop-event" data-event_id="<?=$event_info->id?>" class="btn btn-outline-danger btn-sm">End event</button> </div>
@@ -123,10 +70,8 @@
 									</div>
 
 										<?php endif ?>
-
-
-				    	<?php endif ?>
-								
+									<?php endif ?>
+								</div>
 
 
 				    </div>

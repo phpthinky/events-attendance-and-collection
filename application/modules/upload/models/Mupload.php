@@ -20,13 +20,13 @@ class Mupload extends CI_Model
 
 		$config_upload['allowed_types'] = array('jpg','png','jpeg');
 		//$config_upload['max_size'] = 500000;
-		$config_upload['upload_path'] = 'assets/img/';
+		$config_upload['upload_path'] = 'assets/img/logo/';
 		$config_upload['file_name'] = $filename;
 		$this->load->library('upload',$config_upload);
 		$result = $this->upload->do_upload($files);
 
 		if($result){
-			return base_url('assets/img/'.$filename);
+			return base_url('assets/img/logo/'.$filename);
 		}else{
 			return base_url('assets/img/user.png');
 		}

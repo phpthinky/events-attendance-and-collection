@@ -156,6 +156,29 @@ class Login extends MY_Controller
 
   public function toqrcode($code='',$gname='')
   {
+
+
+    //  $data =json_encode(array('STUDENT_ID'=>$code));
+    $data =site_url('scanner/info/').$code;
+
+    $qr_code_data = QrCode::create($data)
+                 ->setSize(300)
+                 ->setMargin(10)
+                 ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh);
+    $writer = new PngWriter;
+    $label = Label::create('STUDENT ORGANIZATION');
+    $logo = Logo::create(UPLOADPATH.'org-logo.png')
+        ->setResizeToWidth(100);
+    $result = $writer->write($qr_code_data,$logo,label:$label);
+    //header("Content-Type: " . $result->getMimeType());
+
+    //echo $result->getString();
+  //  $qr_code = "QR".$code;
+    $result->saveToFile(UPLOADPATH.'qrcode'.DIRECTORY_SEPARATOR.$code.".png");
+    return;// $code;
+
+
+    /*
     
     $data =json_encode(array($code,$gname));
     $qr_code_data = QrCode::create($data)
@@ -166,14 +189,16 @@ class Login extends MY_Controller
     //$label = Label::create('Sablayan Tourism');
   /*  $logo = Logo::create(BASEPATH.'../assets/img/tourism_logo.png')
         ->setResizeToWidth(100);
-        */
+        * /
     $result = $writer->write($qr_code_data);
     //header("Content-Type: " . $result->getMimeType());
 
     //echo $result->getString();
   //  $qr_code = "QR".$code;
-    $result->saveToFile(UPLOADPATH.$code.".png");
+    $result->saveToFile(UPLOADPATH.'qrcode'.DIRECTORY_SEPARATOR.$code.".png");
     return;// $code;
+
+    */
 
   }
 

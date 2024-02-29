@@ -162,7 +162,7 @@ class Students extends MY_Controller
 
 			if ($result_id = $this->mstudents->add($student_info)) {
 				// code...
-				$this->toqrcode($student_info->code,json_encode($student_qinfo));
+				$this->toqrcode($student_info->code);
 				$student_course->student_id = $student_info->code;
 				$this->mstudents->save_course($student_course);
 
@@ -267,25 +267,25 @@ class Students extends MY_Controller
 		}
 	}
 
-	public function toqrcode($code='',$gname='')
+	public function toqrcode($code='')
 	{
 		
-		$data =json_encode(array($code,$gname));
+
+			$data =site_url('scanner/info/').$code;
 		$qr_code_data = QrCode::create($data)
                  ->setSize(300)
-                 ->setMargin(10);
-               //  ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh);
+                 ->setMargin(10)
+                 ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh);
 		$writer = new PngWriter;
-		//$label = Label::create('Sablayan Tourism');
-	/*	$logo = Logo::create(BASEPATH.'../assets/img/tourism_logo.png')
+		$label = Label::create('STUDENT ORGANIZATION');
+		$logo = Logo::create(UPLOADPATH.'org-logo.png')
 				->setResizeToWidth(100);
-				*/
-		$result = $writer->write($qr_code_data);
+		$result = $writer->write($qr_code_data,$logo,label:$label);
 		//header("Content-Type: " . $result->getMimeType());
 
 		//echo $result->getString();
 	//	$qr_code = "QR".$code;
-		$result->saveToFile(UPLOADPATH.$code.".png");
+		$result->saveToFile(UPLOADPATH.'qrcode'.DIRECTORY_SEPARATOR.$code.".png");
 		return;// $code;
 
 	}
@@ -338,6 +338,25 @@ class Students extends MY_Controller
 	public function register($value='')
 	{
 		// code...
+		if ($this->input->post()) {
+			// code...
+			$action = $this->input->post('action');
+			if ($action == 'approved') {
+				// code...
+				$result = $this->mstudents->approved($this->input->post('student_id'));
+			echo json_encode(array('status'=>true,'msg'=>'Added to students','error'=>$result));
+
+			}
+			if ($action == 'disapproved') {
+				// code...
+				$this->mstudents->remove($this->input->post('student_id'));
+
+			echo json_encode(array('status'=>false,'msg'=>'Student was removed'));
+
+			}
+
+			exit();
+		}
 		$data = new stdClass();
 		$data->list_students = $this->mstudents->register();
 		$data->content = 'students/list_register';
