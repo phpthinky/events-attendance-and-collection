@@ -336,5 +336,40 @@ $('#btn-disapproved').on('click',function(){
             })
 })
 
+
+	$('#profile-photo').on('change',function(e){
+		//$(this).previewphoto
+		previewphoto(this)
+	})
+
+	$('form#form-change-profile').on('submit',function(e){
+		e.preventDefault()
+
+		var formdata = new FormData(this);
+		$.ajax({
+			url: '<?=site_url('students/change_profile')?>',
+			data:formdata,
+			dataType:'json',
+			method:'POST',
+			processData:false,
+			contentType:false,
+			success:
+			function(response){
+				console.log(response)
+				if (response.status == true) {
+					$.notify(response.msg,'success')
+				}else{
+					$.notify(response.msg,'error')
+				}
+			},
+			error:
+			function (i,e) {
+				// body...
+				console.log(i.responseText)
+			}
+		})
+
+	})
+
 //edn onload
 })

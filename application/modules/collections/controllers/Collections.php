@@ -72,7 +72,11 @@ class Collections extends MY_Controller
 		$data = new stdClass();
 
 		$sy = $this->msettings->get_current_sy();
-		$list_all = $this->mcollections->list_1stsemester($sy->id);
+		$year_id = 0;
+		if(!empty($sy)){
+			$year_id = $sy->id;
+		}
+		$list_all = $this->mcollections->list_1stsemester($year_id);
 		$list_students = array();
 		if (!empty($list_all)) {
 			// code...
@@ -156,6 +160,62 @@ class Collections extends MY_Controller
 		$data->content = 'collections/index';
 		$this->template->load($this->theme,$data);
 	}
+	public function print($semester='')
+	{
+		// code...
+		$list_all = null;
+		if ($semester == 1) {
+			// code...
+
+			if ($this->input->post()) {
+					// code...
+				$list_all = $this->mcollections->list_1stsemester($this->input->post('year_id'),$this->input->post('course_id'));
+				if (!empty($list_all)) {
+					// code...
+					foreach ($list_all as $key => $value) {
+						// code...
+						$info = $this->mstudents->info($value->student_id);
+
+						$list_all[$key]->student_name = $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext;
+						$list_all[$key]->course_id = $info->course_id;
+						$list_all[$key]->grade = $info->grade;
+						$list_all[$key]->section = $info->section;
+						$list_all[$key]->course = $info->course_sub_title;
+					}
+				}
+
+				
+			}	
+		}
+		if ($semester == 2) {
+			// code...
+
+			if ($this->input->post()) {
+			// code...
+			$list_all = $this->mcollections->list_2ndsemester($this->input->post('year_id'),$this->input->post('course_id'));
+				if (!empty($list_all)) {
+					// code...
+					foreach ($list_all as $key => $value) {
+						// code...
+						$info = $this->mstudents->info($value->student_id);
+
+						$list_all[$key]->student_name = $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext;
+						$list_all[$key]->course_id = $info->course_id;
+						$list_all[$key]->grade = $info->grade;
+						$list_all[$key]->section = $info->section;
+						$list_all[$key]->course = $info->course_sub_title;
+					}
+				}
+			}
+		}
+
+		$data = new stdClass();
+		$data->school_year = $this->input->post('school_year');
+		$data->course = $this->input->post('course');
+		$data->list_students = $list_all;
+		$data->content = 'collections/print';
+		$this->template->load('print',$data);
+	}
 
 	public function scanner($student_id='')
 	{
@@ -202,6 +262,17 @@ class Collections extends MY_Controller
 	{
 		// code...
 		$student_id = $this->input->post('student_id');
+
+		$info =$this->mstudents->getbycode($student_id);
+		if (!empty($info)) {
+			// code...
+			$info->student_name = trim($info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext);
+		}else{
+
+			echo json_encode(array('status'=>false,'msg'=>'No student found.','data'=>array()));
+			exit;
+		}
+
 		$mga_utang	 = array();
 		if($mga_late = $this->mcollections->listlatepenaltybystudentid($student_id)){
 				foreach ($mga_late as $key => $value) {
@@ -221,11 +292,6 @@ class Collections extends MY_Controller
 				}
 		}
 
-		$info =$this->mstudents->getbycode($student_id);
-		if (!empty($info)) {
-			// code...
-			$info->student_name = trim($info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext);
-		}
 		//var_dump($mga_utang);
 		$utang_info = array();
 			$utang_info['info']=$info;
@@ -249,7 +315,7 @@ class Collections extends MY_Controller
 		
 		if ($info = $this->mcollections->getlatepenalty($event_id,$student_id)) {
 			// code...
-			if ($amount_paid !== $info->late_fee) {
+			if ($amount_paid !== $info->penalty) {
 				// code...
 				//echo json_encode(array());
 				echo json_encode(array('status'=>false,'msg'=>'Late! Please pay exact amount only.'));
@@ -268,7 +334,7 @@ class Collections extends MY_Controller
 				);
 				$this->mcollections->add($data_paid);
 				$this->mevents->pay_late($data_paid);
-				echo json_encode(array('status'=>true,'msg'=>'Successfully paid sample message.'));
+				echo json_encode(array('status'=>true,'msg'=>'Successfully paid.'));
 
 
 			}

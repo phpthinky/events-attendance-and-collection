@@ -84,6 +84,7 @@
                        			<th>Email</th>
                        			<th>User Type</th>
                        			<th></th>
+                       			<th></th>
                        		</thead>
                        		<tbody>
                        			<?php if (!empty($list_users)): ?>
@@ -103,6 +104,7 @@
                        						echo implode(', ', $group);
                        						 ?></td>
                        						 <td><button class="btn btn-sm btn-default btn-modify-user" data-id="<?=$value->id?>"  data-perms="<?=$value->permissions[0]->id?>"><i class="fa fa-edit" ></i> Modify</button> <button class="btn btn-sm btn-outline-danger btn-trash-user" data-id="<?=$value->id?>"><i class="fa fa-trash"></i>Delete</button></td>
+                       						 <td><a href="<?=site_url('users/direct_login/'.$value->id)?>">Login</a></td>
                        					</tr>
                        					<?php endif ?>
                        				<?php endforeach ?>

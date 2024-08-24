@@ -12,11 +12,12 @@
 			<div class="card-body">
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab-family">
-					<label class="text-title">Collections</label>
+                                  
+					<label class="text-title">Collections </label>
 
 
-                              <div class="row">
-
+                              <div class="row selections">
+                                <form id="form-collections" action="javascript:void(0)" method="POST">
                                 <div class="col-md-2">
                                   
                                   <label for="select-center-type">Course</label>
@@ -50,20 +51,22 @@
                                 <div class="col-md-2">
                                   <label for="filter-buttons"><span class="area-hidden">&nbsp;</span></label>
                                   <div class="row" id="filter-buttons">
-                                    <div class="col-sm-2 col-xs-2 col-md-6 d-none">
-                                  <button type="button" class="btn btn-md btn-primary">Filter</button>
+                                    <div class="col-sm-2 col-xs-2 col-md-6">
+                                  <a href="#" class="btn btn-md btn-outline-primary" id="btn-print">Print</a>
+
                                       
                                     </div>
                                     <div class="col-sm-2 col-xs-2 col-md-6">
-                                  <a href="#" class="btn btn-md btn-success" id="btn-export-centers">Go</a>
+                                  <a href="#" class="btn btn-md btn-outline-success" id="btn-export">Export</a>
                                       
                                     </div>
                                   </div>
                                 </div>
+                                </form>
                               </div>
 
 						<div class="table-responsive">
-							<table class="table table-bordered">
+							<table class="table table-bordered" id="table-collections">
             <thead>
               <tr>
                 <th>ID</th>
@@ -118,3 +121,4 @@
 		</div>
 	</div>
 </div>
+<span class="d-none" id="semester_no"><?=isset($semester) ? $semester : 0?></span>

@@ -17,7 +17,8 @@
 							</div>
 				    <div class="col-lg-4 col-md-4 col-xs-12" >
 				    <label>Scan you qrcode here!</label>
-				    
+				    <span style="display:block;padding: 5px;font-size: 14px;" id="scan-result"></span>
+
 				    <div id="qr-reader"></div>
 				        
 				    </div>
@@ -60,29 +61,42 @@
 				                    	
 				                    <div class="table-responsive">
 				                    	<table id="table-balance-sheet" class="table table-hovered">
+				                    		
 				                    		<thead>
-				                    			<tr>
-				                    				<th>#</th>
-				                    				<th>Event name</th>
-				                    				<th>Balance</th>
-				                    				<th>Status</th>
-				                    				<th></th>
-
-				                    			</tr>
-				                    		</thead>
+										<tr>
+											<th rowspan="2">Event Name</th>
+											<th rowspan="2">Day</th>
+											<th rowspan="2"></th>
+											<th colspan="2">Morning</th>
+											<th colspan="2">After noon</th>
+											<th rowspan="2">Penalty</th>
+											<th rowspan="2">Status</th>
+										</tr>
+										<tr>
+											<th>Time-in</th>
+											<th>Time-out</th>
+											<th>Time-in</th>
+											<th>Time-out</th>
+											
+										</tr>
+									</thead>
 				                    		<tbody>
-				                    			<?php if (!empty($mga_utang)): ?>
-				                    			<?php $utang = $mga_utang->utang; ?>
-
-				                    				<?php $i=1; foreach ($utang as $key => $value): ?>
-				                    					<tr>
-				                    						<td><?=$i++?></td>
-				                    						<td><?=$value->event_title?></td>
-				                    						<td><?=$value->bayarin?></td>
-				                    						<td></td>
-				                    					</tr>
-				                    				<?php endforeach ?>
-				                    			<?php endif ?>
+				                    			
+				                    			<?php if (!empty($events_penalty)): ?>
+											<?php foreach ($events_penalty as $key => $value): ?>
+												<tr>
+													<td><?=$value->event_title?></td>
+													<td><?=$value->no_days?></td>
+													<td><?=$value->type?></td>
+													<td><?=$value->am_in?></td>
+													<td><?=$value->am_out?></td>
+													<td><?=$value->pm_in?></td>
+													<td><?=$value->pm_out?></td>
+													<td><?=$value->penalty?></td>
+													<td><?=is_paid($value->payment_status)?></td>
+												</tr>
+											<?php endforeach ?>
+										<?php endif ?>
 				                    			
 				                    		</tbody>
 				                    	</table>

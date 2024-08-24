@@ -65,7 +65,12 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?=site_url()?>" class="site_title"><img src="<?=base_url('assets/img/org-logo-sidebar.png')?>"></a>
+              <?php if (!empty($sitetitle)): ?>
+                <h1 class="site-title"><?=$sitetitle?></h1>
+                <?php else: ?>
+              <a href="<?=site_url()?>" class="site_title"><img src="<?=$sitelogo?>"></a>
+
+              <?php endif ?>
             </div>
 
             <div class="clearfix"></div>
@@ -120,9 +125,10 @@
                     </ul>
                   </li>
                   <?php endif ?>
+                      <?php if ($this->aauth->is_allowed(1)): ?>
+
                   <li><a><i class="fa fa-table"></i> Events <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <?php if ($this->aauth->is_allowed(1)): ?>
                         
                       <li><a href="<?=site_url('events')?>">List all events</a></li>
                       <?php endif ?>
@@ -130,9 +136,10 @@
                         
                       <li><a href="<?=site_url('events/create')?>">Create event</a></li>
 
-                      <?php endif ?>
                     </ul>
                   </li>
+                      <?php endif ?>
+                  
                   <?php if ($this->aauth->is_admin()): ?>
                     
 
@@ -142,8 +149,9 @@
                       <li><a href="<?=site_url('collections/settings')?>">Collection settings</a></li>
                       <li class="d-none"><a href="<?=site_url('settings/semester')?>">Semester settings</a></li>
                       <li><a href="<?=site_url('settings/schoolyear')?>">School year settings</a></li>
+                      <li><a href="<?=site_url('settings/site')?>">Site settings</a></li>
                       <li><a href="<?=site_url('users')?>">Account settings</a></li>
-                      <li><a href="<?=site_url('settings/backup')?>">Reset system settings</a></li>
+                      <li><a href="<?=site_url('settings/backup')?>">Backup system</a></li>
                         
                     </ul>
                   </li>
@@ -244,6 +252,8 @@
 
     <!-- dropzone upload -->
     <script src="<?=base_url()?>/template/gentelella/vendors/dropzone/dist/min/dropzone.min.js"></script>
+
+    <script type="text/javascript" src="<?=assets_url()?>plugins/sheetjs/js/xlsx.full.min.js"></script>
   
     <!-- Chart.js -->
     <script src="<?=base_url()?>/template/gentelella/vendors/Chart.js/dist/Chart.min.js"></script>

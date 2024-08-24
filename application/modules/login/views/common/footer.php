@@ -6,6 +6,7 @@
       <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <!-- plugins:js -->
     <script src="templates/corona//assets/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->

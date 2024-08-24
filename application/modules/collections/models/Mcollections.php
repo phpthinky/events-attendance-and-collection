@@ -197,7 +197,7 @@ class Mcollections extends CI_Model
 	public function getlatepenalty($event_id=0,$student_id=0)
 	{
 		// code...
-		return $this->db->get_where('v_penalty',array('event_id'=>$event_id,'student_id'=>$student_id))->row(0);
+		return $this->db->get_where('events_late',array('event_id'=>$event_id,'student_id'=>$student_id))->row(0);
 	}
 
 	public function getabsentpenalty($event_id=0,$student_id=0)

@@ -103,7 +103,7 @@ $autoload['helper'] = array('url','html','custom','googleauthenticator','recaptc
 | config files.  Otherwise, leave it blank.
 |
 */
-$autoload['config'] = array('global_config');
+$autoload['config'] = array('global_config','google_config');
 
 /*
 | -------------------------------------------------------------------

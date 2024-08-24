@@ -160,6 +160,7 @@
 						<?php if (!empty($year_id)): ?>
 							
 						<input class="btn btn-outline-primary btn-sm" name="submit" id="btn-submit" type="submit" value="Add event">
+						<span class="pre-text text-danger d-none">Please wait...</span>
 					<?php else: ?>
 						<a class="btn btn-sm disabled" disabled >Disabled - No school year</a>
 						<?php endif ?>

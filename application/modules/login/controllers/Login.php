@@ -3,9 +3,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentLeft;
 
 class Login extends MY_Controller
   {
+    private $google_keys;
+    private $site_key;
+    private $secret_key;
 
   public function __construct()
   {
@@ -16,10 +22,15 @@ class Login extends MY_Controller
 
     $this->load->model('settings/settings_model');
     $this->load->model('course/mcourse');
+    $this->site_key = $this->config->item('gsite_key');
+    $this->secret_key = $this->config->item('gsecret_key');
+
+    $this->load->model('settings/settings_model','msettings');
+
     }
 
   public function index() {
-    
+   
     if ($this->aauth->is_loggedin()) {
       // code...
       redirect('dashboard');
@@ -30,11 +41,6 @@ class Login extends MY_Controller
       // code...
       if($this->aauth->login($this->input->post('userName'),$this->input->post('passWord'))){
         $this->user_id = $this->session->userdata('id');
-        //$this->load->model('tourguide/tourguide_model','mtourguide');
-        //$info = $this->mtourguide->getbyId($this->user_id);
-       // $this->session->set_userdata('tourguide',$info->fName.' '.$info->lName);
-       // $workersId = $this->workers_model->getWorkerId($userId);
-       // $this->session->set_userdata('workersId',$workersId);
 
 
         if (!empty($_GET['url'])) {
@@ -49,8 +55,10 @@ class Login extends MY_Controller
 
       //exit();
     }
-    $data->courses =  $this->mcourse->list();
+    $data->login_logo = $this->msettings->getloginlogo();
 
+    $data->courses =  $this->mcourse->list();
+    $data->site_key = $this->site_key;
     $data->url = (!empty($_GET['url'])? $_GET['url'] :'');
     $data->content = 'login/index';
     $this->template->load($this->theme,$data);
@@ -106,6 +114,11 @@ class Login extends MY_Controller
       echo json_encode(array('status'=>false,'msg'=>'This Student ID is already exist in our database!'));
       exit();
     }
+    if (!$this->validate()) {
+      // code..
+      echo json_encode(array('status'=>false,'msg'=>'Validate Failed! Please try again.'));
+      exit();
+    }
 
       $student_info = new stdClass();
       $student_info->fName = $this->input->post('fName');
@@ -147,7 +160,6 @@ class Login extends MY_Controller
     }
         echo json_encode(array('status'=>false,'msg'=>'No student added.'));
 
-
     exit();
     }
     echo "No input";
@@ -159,38 +171,16 @@ class Login extends MY_Controller
 
 
     //  $data =json_encode(array('STUDENT_ID'=>$code));
-    $data =site_url('scanner/info/').$code;
 
-    $qr_code_data = QrCode::create($data)
-                 ->setSize(300)
-                 ->setMargin(10)
-                 ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh);
-    $writer = new PngWriter;
-    $label = Label::create('STUDENT ORGANIZATION');
-    $logo = Logo::create(UPLOADPATH.'org-logo.png')
-        ->setResizeToWidth(100);
-    $result = $writer->write($qr_code_data,$logo,label:$label);
-    //header("Content-Type: " . $result->getMimeType());
-
-    //echo $result->getString();
-  //  $qr_code = "QR".$code;
-    $result->saveToFile(UPLOADPATH.'qrcode'.DIRECTORY_SEPARATOR.$code.".png");
-    return;// $code;
-
-
-    /*
-    
-    $data =json_encode(array($code,$gname));
+    $data =site_url('scanner/info?qrcode=').$code;
     $qr_code_data = QrCode::create($data)
                  ->setSize(300)
                  ->setMargin(10);
-               //  ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh);
     $writer = new PngWriter;
-    //$label = Label::create('Sablayan Tourism');
-  /*  $logo = Logo::create(BASEPATH.'../assets/img/tourism_logo.png')
-        ->setResizeToWidth(100);
-        * /
-    $result = $writer->write($qr_code_data);
+    $label = Label::create('STUDENT GOVERNMENT');
+    //$logo = Logo::create(UPLOADPATH.'org-logo.png')
+      //  ->setResizeToWidth(100);
+    $result = $writer->write($qr_code_data,null,label:$label);
     //header("Content-Type: " . $result->getMimeType());
 
     //echo $result->getString();
@@ -198,8 +188,66 @@ class Login extends MY_Controller
     $result->saveToFile(UPLOADPATH.'qrcode'.DIRECTORY_SEPARATOR.$code.".png");
     return;// $code;
 
-    */
 
+
+  }
+
+  function validate()
+  {
+    $captcha_response = trim($this->input->post('g-recaptcha-response'));
+
+    if($captcha_response != '')
+    {
+      $check = array(
+        'secret'    =>  $this->secret_key,
+        'response'    =>  $this->input->post('g-recaptcha-response')
+      );
+
+      $startProcess = curl_init();
+
+      curl_setopt($startProcess, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+
+      curl_setopt($startProcess, CURLOPT_POST, true);
+
+      curl_setopt($startProcess, CURLOPT_POSTFIELDS, http_build_query($check));
+
+      curl_setopt($startProcess, CURLOPT_SSL_VERIFYPEER, false);
+
+      curl_setopt($startProcess, CURLOPT_RETURNTRANSFER, true);
+
+      $receiveData = curl_exec($startProcess);
+
+      $finalResponse = json_decode($receiveData, true);
+
+      if($finalResponse['success'])
+      {
+        return true;
+        //$result = $this->enroll();
+
+        //$this->captcha_model->insert($storeData);
+
+        //$this->session->set_flashdata('success_message', 'Data Stored Successfully');
+
+       // redirect('captcha');
+      }
+      else
+      {
+        return false;
+       // $this->session->set_flashdata('message', 'Validation Fail Try Again');
+       // redirect('captcha');
+       // echo json_encode(array('status'=>false,'msg'=>'Validation Failed. Please Try again!'));
+        //exit();
+      }
+    }
+    else
+    {
+      return false;
+        //echo json_encode(array('status'=>false,'msg'=>'Validation Failed. Please Try again!'));
+        //exit();
+      
+      //$this->session->set_flashdata('message', 'Validation Fail Try Again');
+      //redirect('captcha');
+    }
   }
 
 

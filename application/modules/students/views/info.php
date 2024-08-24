@@ -7,6 +7,8 @@
 		<ul class="nav nav-tabs">
 			<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-family">Student details</a></li>
 			<li class="nav-item"><a class="nav-link" href="<?=site_url('students/edit/'.$info->code)?>">Edit</a></li>
+
+			<li class="nav-item"><a class="nav-link"data-toggle="tab" href="#tab-profile">Change profile photo</a></li>
 		</ul>
 			</div>
 			<div class="card-body">
@@ -29,7 +31,9 @@
          
 							</div>
 							<div class="col-md-6 col-sm-6 print-6">
-							
+								<div class="row">
+									<img src="<?=(!empty($info->profile_photo) ? $info->profile_photo : base_url('assets/img/user.png'))?>" class="profile-photo">
+								</div>
 								<div class="row">
 									<div class="col-md-12"><label class="text-title">Name</label><span class="text-description"><?=isset($info) ? $info->fName.' '.$info->mName.' '.$info->lName.' '.$info->ext : '' ?></span></div>
 								</div>
@@ -112,6 +116,33 @@
 									<div class="col-md-12"><button class="btn btn-outline-primary btn-print"><i class="fa fa-print"></i></button></div>
 								</div>
 							</div>
+						</div>
+					</div>
+					<div id="tab-profile" class="tab-pane">
+						<label>Change profile</label>
+						<hr>
+						<div class="form-responsive">
+							<form class="form" id="form-change-profile">
+								<div class="row form-group">
+									<label></label>
+								<input type="file" class="file-input" name="profile" id="profile-photo" accept=".jpg,.png">
+								</div>
+
+						<div class="row">
+							
+                            <div class="col-md-4">
+                              <img class="preview-photo" src="<?=base_url('assets/img/user.png')?>">
+                            </div>
+
+						</div>
+						<div class="row">
+							<input type="hidden" name="student_id" value="<?=$info->code?>">
+						</div>
+						<div class="row">
+							<br>
+							<input type="submit" name="submit" value="Upload" class="btn btn-success">
+						</div>
+							</form>
 						</div>
 					</div>
 

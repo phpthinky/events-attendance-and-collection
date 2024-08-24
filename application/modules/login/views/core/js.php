@@ -8,8 +8,9 @@ $(function(){
 					$.notify('Invalid Student ID');
 			return false;
 		}
-		
+
 		var formdata = $(this).serializeArray();
+		
 		$.ajax({
 			url:'<?=site_url('login/enroll')?>',
 			dataType:'json',
@@ -19,6 +20,7 @@ $(function(){
 				console.log(response)
 				if (response.status == true) {
 					$.notify(response.msg,'success')
+					window.location = '<?=site_url('login')?>';
 				}else{
 					$.notify(response.msg)
 

@@ -1,4 +1,12 @@
 <div class="row barangay table-responsive">
+
+                                <div class="col-md-12">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                  <input type="search" id="searchstring-center" name="searchstring" placeholder="Search here..." class="form-control"></p>
+                                    </div>
+                                  </div>
+                                </div>
           <table class="table table-bordered" id="table-list-students-library">
             <thead>
               <tr>

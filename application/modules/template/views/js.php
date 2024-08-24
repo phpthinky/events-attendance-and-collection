@@ -101,3 +101,26 @@ function addDays(ndate, days) {
   result.setDate(result.getDate() + parseInt(days));
   return result;
 }
+
+function GetURLParameter(sParam,url)
+{
+   // var sPageURL = window.location.search.substring(1);
+	
+		var q_url = url.split('?');
+	
+	//console.log(sPageURL)
+
+    var sURLVariables = q_url[1].split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return decodeURIComponent(sParameterName[1]);
+        }
+    }
+}
+/*
+var id = GetURLParameter('id');
+var name= GetURLParameter('name');
+*/

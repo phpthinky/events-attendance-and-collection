@@ -85,6 +85,14 @@ if (!function_exists('tomdy')) {
 		}
 }
 
+if (!function_exists('toymd')) {
+			function toymd($date){
+					$date = strtotime($date);
+					return date('Y-m-d',$date);
+		
+		}
+}
+
 if (!function_exists('monthyear')) {
 			function monthyear($date){
 					$date = strtotime($date);
@@ -462,6 +470,8 @@ if ( ! function_exists('is_paid'))
 		if ($num == 1) {
 			// code...
 			$sem = 'Paid';
+		}elseif($num == 2){
+			$sem = '';
 		}else{
 			$sem = 'Unpaid';
 		}

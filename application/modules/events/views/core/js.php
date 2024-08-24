@@ -37,22 +37,32 @@ $(function(){
 			data:formdata,
 			dataType:'json',
 			method:'POST',
-			success:
-			function(response){
+			beforeSend:function(){
+				$('#btn-submit').addClass('d-none')
+				$('.pre-text').removeClass('d-none')
+			},
+			success:function(response){
 				console.log(response)
 				if (response.status == true) {
 				$.notify(response.msg,'success')
 
 				}else{
 				$.notify(response.msg)
+				$('#btn-submit').removeClass('d-none')
 
 				}
 			},
-			error:
-			function (i,e) {
+			error:function (i,e) {
 				// body...
 				console.log(i.responseText)
+				$('.pre-text').text('Something went wrong!')
+
+			},
+			complete:function(){
+				$('.pre-text').addClass('d-none')
+
 			}
+
 		})
 
 	})
@@ -155,7 +165,86 @@ $(function(){
 		}
 	})
 	$('select[name="has_afternoon"]').trigger('change')
+	
+	$('select#select-year_id').on('change',function(){
+		$.ajax({
+			url:'<?=site_url('events/listevents/')?>'+$(this).val(),
+			dataType:'text',
+			success:function(response){
+				//console.log(response)
+				$('select#select-events').html(response)
+			},
+			error: function(i,e){
+				console.log(i.responseText)
+			}
+		})
 
+	});
+
+
+	$('select#select-course').on('change',function(){
+
+		$('select#select-events').trigger('change');		
+
+	});
+
+	$('select#select-events').on('change',function(){
+
+		var formdata = {};
+			formdata.event_id = $(this).val();
+			formdata.course_id = $('select#select-course').val();
+			formdata.year_id = $('select#select-year_id').val();
+			
+
+			$.ajax({
+			url: '<?=site_url('events/get_attendees/')?>'+formdata.event_id+'/'+formdata.course_id,
+			data:formdata,
+			dataType:'json',
+			success:
+			function(response){
+				console.log(response)
+				//if (response.status == true) {
+					console.log(response.data)
+					$('#table-list-completed').DataTable({
+						dom:'B',
+						destroy:true,
+						data:response.data,
+						columns:[
+							{data:'student_name'},
+							{data:'course_sub_title'},
+							{data:'date_of_event'},
+							{data:'timein'},
+							{data:'timeout'},
+							{data:'pm_in'},
+							{data:'pm_out'},
+							{data:'status'},
+
+
+							]
+					})
+			},
+			error:
+			function (i,e) {
+				// body...
+				console.log(i.responseText)
+			}
+		})
+
+
+	});
+
+
+		$('select#select-events').trigger('change');	
+
+		$('#btn-export').on('click',function(){
+
+			let event_id = $('select#select-events').val();
+			let course_id = $('select#select-course').val();
+			let year_id = $('select#select-year_id').val();
+			//	let a = $('<a/>');
+				let url = '<?=site_url()?>'+'/export/events_completed/'+year_id+'/'+event_id+'/'+course_id;
+				window.open(url)
+			})
 
 	//end onload
 })

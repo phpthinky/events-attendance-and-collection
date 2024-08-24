@@ -93,6 +93,11 @@
     return $this->db->limit(1)->get_where('settings_schoolyear',array('status'=>1))->row(0);
   }
   
+  public function get_sy($year_id=0)
+  {
+    // code...
+    return $this->db->limit(1)->get_where('settings_schoolyear',array('id'=>$year_id))->row(0);
+  }
   public function system_info($data='')
   {
     // code...
@@ -107,7 +112,7 @@
   }
   public function reset_all($value='')
   {
-    $this->db->truncate('course');
+    //$this->db->truncate('course');
     $this->db->truncate('students');
     $this->db->truncate('students_enrolled');
     $this->db->truncate('course_students');
@@ -133,20 +138,89 @@
           unlink($file); // delete file
         }
       }
-
+/*
     $destinations = glob(UPLOADPATH.'/logo/*'); // get all file names
       foreach($destinations as $file){ // iterate files
         if(is_file($file)) {
           unlink($file); // delete file
         }
       }
-
+*/
+    /*
     $booking = glob(UPLOADPATH.'/qrcode/*'); // get all file names
       foreach($booking as $file){ // iterate files
         if(is_file($file)) {
           unlink($file); // delete file
         }
       }
+      */
   }
 
- } ?>
+  function restoredb($filename=null)
+  {
+    $isi_file = file_get_contents($filename);
+    $string_query = rtrim( $isi_file, "\n;" );
+    $array_query = explode(";", $string_query);
+    foreach($array_query as $query)
+    {
+      $this->db->query($query);
+    }
+  }
+
+  public function site($data='')
+  {
+    // code...
+    if ($this->db->get_where('settings_site',array('title'=>$data->title))->row(0)) {
+      // code...
+      $this->db->where('title',$data->title);
+      return $this->db->update('settings_site',$data);
+    }
+      return $this->db->insert('settings_site',$data);
+  }
+
+  public function getsitelogo()
+  {
+    // code...
+    $row = $this->db->get_where('settings_site',array('title'=>'sitelogo'))->row(0);
+
+    if (!empty($row)) {
+      // code...
+      return $row->value;
+    }
+      return base_url('assets/img/org-logo-sidebar.png');
+  }
+
+   public function getloginlogo()
+  {
+    // code...
+    $row = $this->db->get_where('settings_site',array('title'=>'loginlogo'))->row(0);
+
+    if (!empty($row)) {
+      // code...
+      return $row->value;
+    }
+      return base_url('assets/img/org-logo-sidebar.png');
+  }
+
+  public function getsitetitle()
+  {
+    // code...
+    $row = $this->db->get_where('settings_site',array('title'=>'site_title'))->row(0);
+    if (!empty($row)) {
+      return $row->value;
+    } 
+      return null;
+  }
+
+ } 
+
+/*update 
+ALTER TABLE `course` ADD `is_deleted` INT(1) NULL DEFAULT NULL AFTER `status`;
+
+*/
+
+
+ ?>
+
+
+

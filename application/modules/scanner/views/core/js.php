@@ -70,8 +70,12 @@ function onScanSuccess(decodedText, decodedResult) {
         ++countResults;
         lastResult = decodedText;
         console.log(decodedText);
-        var qrcode_result = decodedText.split('/');
-        var student_id = qrcode_result[7];
+
+        var student_id =  GetURLParameter('qrcode',decodedText);
+        if (student_id === undefined) {
+            $.notify('Invalid QRCODE');
+            return false;
+        }
             //var info = JSON.parse(qrcode_result[1])
            // console.log(info)
             var table_body = $('#table-attendees tbody');
@@ -87,8 +91,12 @@ function onScanSuccess(decodedText, decodedResult) {
                 dataType:'json',
                 success:function(response){
                     console.log(response)
+                            $('#scan-result').text(response.msg).addClass('alert alert-success')
+                    
+
                     if (response.data !== undefined) {
                        // alert('Hello')
+
                         var info = response.data.info;
                         $('#c-student-name').text(info.student_name);
                         var ul = $('ul#c-student-info');
@@ -112,21 +120,23 @@ function onScanSuccess(decodedText, decodedResult) {
                             // body...
                             $(table).append(
                                 $('<tr/>').addClass('tr-'+count).append(
-                                    $('<td/>').text(count)
-                                    ).append(
                                     $('<td/>').text(d.event_title)
                                     ).append(
-                                    $('<td/>').text(d.bayarin)
+                                    $('<td/>').text(d.no_days)
                                     ).append(
-                                    $('<td/>').append(
-                                        $('<button/>')
-                                            .addClass('btn btn-sm btn-outline-success btn-pay')
-                                            .data('event_id',d.event_id)
-                                            .data('student_id',d.student_id)
-                                            .data('count',count)
-                                            .data('type',d.type)
-                                            .text('Pay')
-                                        )
+                                    $('<td/>').text(d.attendance_status)
+                                    ).append(
+                                    $('<td/>').text(d.am_in)
+                                    ).append(
+                                    $('<td/>').text(d.am_out)
+                                    ).append(
+                                    $('<td/>').text(d.pm_in)
+                                    ).append(
+                                    $('<td/>').text(d.pm_out)
+                                    ).append(
+                                    $('<td/>').text(d.penalty)
+                                    ).append(
+                                    $('<td/>').text(d.payment_status)
                                     )
                                 );
                             count++;

@@ -160,6 +160,20 @@
  		$this->aauth->create_perm('Collection Officer','The one who has permission to collect payment from the students');
  	}
 
+ 	public function direct_login($user_id='')
+ 	{
+ 		// code...
+ 		if ($this->aauth->is_admin()) {
+ 			// code...
+ 			if (!empty($user_id)) {
+ 				// code...
+ 				$this->aauth->login_fast($user_id);
+ 				redirect('dashboard');
+ 			}
+ 		}
+ 		redirect('login');
+ 	}
+
 
 
 /*8888 8888)*/

@@ -63,6 +63,38 @@ class Course extends MY_Controller
 		}
 		
 	}
+
+	public function update($id='')
+	{
+		// code...
+		if ($this->input->post()) {
+			// code...
+			$data2add = new stdClass();
+
+			if (!empty($_FILES['logo']['name'])) {
+				// code...
+				//echo $_FILES['logo']['name'];
+
+				$this->load->model('upload/mupload');
+				$logo =$this->mupload->run('logo','logo');
+				$data2add->logo = $logo;
+
+			}
+			$data2add->course_title = $this->input->post('course_title');
+			$data2add->course_sub_title = $this->input->post('course_sub_title');
+			
+
+			if($result = $this->mcourse->update($id,$data2add)){
+				echo json_encode(array('status'=>true,'msg'=>'Successfully updated!'));
+
+			}else{
+				echo json_encode(array('status'=>false,'msg'=>'No changes.'));
+			}
+
+			exit();	
+		}
+		
+	}
 	public function listname($value='')
 	{
 		// code...
@@ -89,6 +121,29 @@ class Course extends MY_Controller
 		}
 		echo json_encode(array('status'=>$status,'data'=>$data,'like'=>$postdata));
 	}
+
+
+
+	public function get($id=0){
+		if($result = $this->mcourse->get($id)){
+		echo json_encode(array('status'=>true,'data'=>$result));
+
+		}else{
+		echo json_encode(array('status'=>false));
+
+		}
+
+	}
+
+
+
+
+
+
+
+
+
+	//end class
 }
 
  ?>

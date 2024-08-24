@@ -33,7 +33,7 @@
                 <br />
 
                 <div>
-                  <h1><img src="<?=base_url('assets/img/org-logo.png')?>" style="width: 150px;height: 130px;"></h1>
+                  <h1><img src="<?=!empty($login_logo) ? $login_logo : base_url('assets/img/org-logo.png')?>" style="width: 150px;height: 130px;"></h1>
                   <p>©<?=date('Y')?> Students Organization Collections and Events Monitoring System</p>
                 </div>
               </div>
@@ -43,6 +43,7 @@
 
         <div id="register" class="animate form registration_form">
           <section class="login_content">
+            <a class="btn btn-sm btn-outline-secondary" href="#login"><i class="fa fa-arrow-left"></i> back</a>
             
 
               <form method="post" action="javascript:void(0)" id="form-enroll">
@@ -136,8 +137,13 @@
                         </div>
                             <div class="row form-group">
 
+
                         <?php  //$this->aauth->generate_recaptcha_field(); ?>
                         </div>
+
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="<?=$site_key?>"></div>
+                    </div>
                         
                             <div class="row form-group">
                               <button class="btn btn-outline-success btn-save" type="submit"><i class="fa fa-save"></i> Save</button>

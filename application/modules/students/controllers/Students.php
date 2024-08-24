@@ -271,16 +271,15 @@ class Students extends MY_Controller
 	{
 		
 
-			$data =site_url('scanner/info/').$code;
+		$data =site_url('scanner/info?qrcode=').$code;
 		$qr_code_data = QrCode::create($data)
                  ->setSize(300)
-                 ->setMargin(10)
-                 ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh);
+                 ->setMargin(10);
 		$writer = new PngWriter;
-		$label = Label::create('STUDENT ORGANIZATION');
-		$logo = Logo::create(UPLOADPATH.'org-logo.png')
-				->setResizeToWidth(100);
-		$result = $writer->write($qr_code_data,$logo,label:$label);
+		$label = Label::create('STUDENT GOVERNMENT');
+		//$logo = Logo::create(UPLOADPATH.'org-logo.png')
+			//	->setResizeToWidth(100);
+		$result = $writer->write($qr_code_data,null,label:$label);
 		//header("Content-Type: " . $result->getMimeType());
 
 		//echo $result->getString();
@@ -295,10 +294,38 @@ class Students extends MY_Controller
 		$data = new stdClass();
 
 		$data->info = $this->mstudents->getbycode($id_number);
-		$data->events_penalty = $this->mevents->getbystudentid($id_number);
+		if($events_penalty = $this->mattendance->getbystudentid($id_number)){
+				foreach ($events_penalty as $key => $value) {
+					// code...
+					$event_info = $this->mevents->info($value->event_id);
+					$events_penalty[$key]->event_title = $event_info->event_title;
+					$events_penalty[$key]->am_in = $value->timein;
+					$events_penalty[$key]->am_out = $value->timeout;
+					
+				}
+		}
+		$data->events_penalty = $events_penalty;
 
 		$data->content = 'students/info';
 		$this->template->load($this->theme,$data);
+	}
+	public function change_profile($value='')
+	{
+		// code...
+		if ($this->input->post()) {
+			// code...
+				$data = new stdClass();
+				$data->code = $this->input->post('student_id');
+				$this->load->model('upload/mupload');
+				$profile =$this->mupload->profile('profile','profile');
+				$data->profile_photo = $profile;
+				if($this->mstudents->update_by_code($data)){
+					echo json_encode(array('status'=>true,'msg'=>'Profile successfully change.'));
+				}else{
+					echo json_encode(array('status'=>false,'msg'=>'No changes.'));
+
+				}
+		}
 	}
 
 	public function scanned($student_id='')

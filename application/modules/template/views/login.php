@@ -47,8 +47,11 @@
     </div>
     <script src="<?=base_url()?>/template/gentelella/vendors/jquery/dist/jquery.min.js"></script>
     <script src="<?=assets_url()?>/plugins/notify/notify.min.js"></script>
-
+    
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    
     <script type="text/javascript">
+      
       <?php $this->load->view('core/js.php'); ?>
 
     </script>

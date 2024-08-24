@@ -35,11 +35,11 @@
 		</div>
 		<!-- attendance rate -->
 
-		<div class="col-md-3">
+		<div class="col-md-3 d-none">
 			<div class="card">
 				<div class="card-body h-200">
 
-					<label><i class="fa fa-users"></i> Attendace Rate</label>
+					<label><i class="fa fa-users"></i> Attendance Rate</label>
 					<hr>
 					<center>
 						<h1>0%</h1>
@@ -62,9 +62,7 @@
 						<?php if ($this->aauth->is_allowed(1)): ?>
 						<a class="btn btn-block btn-outline-primary" href="<?=site_url('attendance')?>">SCAN NOW</a>
 							
-						<?php endif ?>
-
-						<?php if ($this->aauth->is_allowed(2)): ?>
+						<?php elseif($this->aauth->is_allowed(2)): ?>
 						<a class="btn btn-block btn-outline-primary" href="<?=site_url('collections/scanner')?>">SCAN NOW</a>
 							
 						<?php endif ?>
@@ -79,11 +77,11 @@
 			<div class="card">
 				<div class="card-body h-200">
 
-					<label><i class="fa fa-users"></i> Recents Accounts</label>
+					<label><i class="fa fa-users"></i> Pending Registration</label>
 					<hr>
 					<center>
 						<h1><a href="<?=site_url('students/register')?>"><?=$new_accounts?></a></h1>
-					<span>User</span></center>
+					<span>Students</span></center>
 
 				</div>
 			</div>

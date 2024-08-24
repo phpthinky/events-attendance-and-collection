@@ -87,7 +87,7 @@
 									<?php if (!empty($list_events_completed)): ?>
 										<?php foreach ($list_events_completed as $key => $value): ?>
 											<tr>
-												<td><?=$value->event_title?></td>
+												<td><a href="<?=site_url('events/completed/'.$value->id)?>"><?=$value->event_title?></a></td>
 												<td><?=implode(',',$value->courses)?></td>
 
 												<td><?=toMMdy($value->event_startdate)." " .time_format($value->morning_timein)?></td>

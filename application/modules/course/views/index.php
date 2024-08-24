@@ -7,6 +7,7 @@
 		<ul class="nav nav-pills">
 			<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-courses">Course offered</a></li>
 			<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-create">Add course</a></li>
+			<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-edit">Edit course</a></li>
 
 		</ul>
 			</div>
@@ -51,7 +52,6 @@
                             </div>
                           </div>
                         </div>
-
 						</div>
 
 							<?php endforeach ?>
@@ -65,6 +65,14 @@
 
 
 						<?php $this->load->view('create'); ?>
+					</div>
+
+					<div class="tab-pane" id="tab-edit">
+						Create course
+						<hr>
+
+
+						<?php $this->load->view('edit'); ?>
 					</div>
 				</div>
 			</div>

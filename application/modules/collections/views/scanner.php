@@ -17,6 +17,7 @@
 							</div>
 				    <div class="col-lg-4 col-md-4 col-xs-12" >
 				    <label>Scan you qrcode here!</label>
+				    <span style="display:block;padding: 5px;font-size: 14px;" id="scan-result"></span>
 				    
 				    <div id="qr-reader"></div>
 				        

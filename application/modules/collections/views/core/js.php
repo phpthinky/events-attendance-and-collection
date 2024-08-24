@@ -71,8 +71,12 @@ function onScanSuccess(decodedText, decodedResult) {
         lastResult = decodedText;
         //console.log(decodedText);
         //var qrcode_result = JSON.parse(decodedText);
-        var result = decodedText.split('/')
-        var student_id = result[7];
+       // var result = decodedText.split('/')
+        var student_id =  GetURLParameter('qrcode',decodedText);
+        if (student_id === undefined) {
+            $.notify('Invalid QRCODE');
+            return false;
+        }
             //var info = JSON.parse(qrcode_result[1])
            // console.log(info)
             var table_body = $('#table-attendees tbody');
@@ -102,6 +106,17 @@ function onScanSuccess(decodedText, decodedResult) {
                 dataType:'json',
                 success:function(response){
                     console.log(response)
+                    
+                        if (response.status == true) {
+                            $.notify(response.msg,'success');
+                            $('#scan-result').text(response.msg).addClass('alert alert-success')
+
+                        }else{
+                            $.notify('No student found.','error');
+                            $('#scan-result').text(response.msg).addClass('alert alert-danger')
+
+                        }
+
                     if (response.data !== undefined) {
                        // alert('Hello')
                         var info = response.data.info;
@@ -171,13 +186,15 @@ function onScanSuccess(decodedText, decodedResult) {
                                     success:function(response){
                                         console.log(response)
 
-                                        notify(response)
                                         if (response.status == true) {
+                                            $.notify(response.msg,'success')
                                             $('#modal-pay').modal('hide')
                                             $('#btn-paid').removeClass('disabled').removeAttr('disabled');
                                             $('.tr-'+counter).remove();
                                             console.log(counter)
                                         }else{
+                                            $.notify(response.msg,'error')
+
                                             $('#btn-paid').removeClass('disabled').removeAttr('disabled');
 
                                         }
@@ -191,7 +208,8 @@ function onScanSuccess(decodedText, decodedResult) {
                         })
                         /**/
                     //};
-                    notify(response)
+                    //notify(response)
+
                 },
                 error:function(i,e){
                     console.log(i.responseText)
@@ -220,6 +238,7 @@ $('#start-scanner').on('click',function (e) {
 //current_time();
 
 
-})
+});
  
+<?php include_once('print.js.php'); ?>
 <?php include_once('chart.js.php'); ?>

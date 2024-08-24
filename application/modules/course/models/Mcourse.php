@@ -16,16 +16,21 @@ class Mcourse extends CI_Model
 		$this->db->insert('course',$data);
 		return $this->db->insert_id();
 	}
-	public function update($data)
+	public function update($id,$data)
 	{
 		// code...
-		$this->db->where('id',$data->id);
-		$this->db->update('course',$data);
+		$this->db->where('id',$id);
+		return $this->db->update('course',$data);
 	}
 	public function find($data='')
 	{
 		// code...
 		return $this->db->get_where('course',array('course_title'=>$data->course_title))->result();
+	}
+	public function get($id='')
+	{
+		// code...
+		return $this->db->get_where('course',array('id'=>$id))->row(0);
 	}
 	public function list($data='')
 	{

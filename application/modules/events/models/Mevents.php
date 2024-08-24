@@ -96,6 +96,13 @@ class Mevents extends CI_Model
 		}
 		return $result;
 	}
+
+	public function list_completed($event_id=0,$year_id=0,$course_id=0)
+	{
+		
+
+		$result = $this->db->order_by('event_startdate','ASC')->get_where('events',array('status'=>2))->result();
+	}
 	public function like($data)
 	{
 		$sql = $this->db->select('*')
@@ -115,10 +122,15 @@ class Mevents extends CI_Model
 		if($row = $this->db->get_where('events',array('id'=>$id))->row(0)){
 
 				$courses = json_decode($row->attendees_course);
+				
 				$c =  array();
+				$d =  array();
 				foreach ($courses as $a => $b) {
 					// code...
+
 					$info_course = $this->db->get_where('course',array('id'=>$b))->row(0);
+					$d[] = $info_course->course_sub_title;
+
 					foreach (json_decode($row->attendees_year) as $i => $v) {
 						// code...
 					$c[] = $info_course->course_sub_title.' '.$v;
@@ -126,6 +138,9 @@ class Mevents extends CI_Model
 					}
 				}
 				$row->courses = $c;
+				$row->course_attendees = $d;
+				//var_dump($row->course_attendees);
+				//exit;
 		}
 				return $row;
 	}
@@ -169,13 +184,55 @@ class Mevents extends CI_Model
 		// code...
 		return $this->db->insert('events_absent',$data);
 	}
+
 	public function list_late($event_id=0)
 	{
 		// code...
-		$sql = sprintf("SELECT * FROM `events_attendance` WHERE penalty_late = 1 and event_id = %u GROUP by event_id,student_id;",$event_id);
+		$sql = sprintf("SELECT events_attendance.*,course_id,year_id FROM `events_attendance` JOIN course_students ON course_students.student_id = events_attendance.student_id WHERE penalty_late = 1 and event_id = %u GROUP by event_id,student_id;",$event_id);
+
 		$query = $this->db->query($sql);
 		return $query->result();
 
+	}
+	public function list_skipper($event_id='')
+	{
+		// code...
+		$event_info = $this->db->get_where('events',array('id'=>$event_id))->row(0);
+
+		$sql = sprintf("SELECT events_attendance.*,course_id,year_id FROM `events_attendance` JOIN course_students ON course_students.student_id = events_attendance.student_id WHERE penalty_late = 0 and penalty_absent = 0 and event_id = %u GROUP by event_id,student_id;",$event_id);
+		$query = $this->db->query($sql);
+		$data = array();
+		if($result = $query->result()){
+
+			foreach ($result as $key => $value) {
+				// code...
+				if ($event_info->has_afternoon == 1) {
+					// code...
+					if ($value->timein !== null || $value->timeout == null) {
+						// code...
+						$data[] = $value;
+
+					}
+				}elseif ($event_info->has_afternoon == 2) {
+					// code...
+					if ($value->pm_in !== null || $value->pm_out == null) {
+						// code...
+						$data[] = $value;
+
+					}
+				}else{
+					if ($value->timein !== null || $value->timeout == null || $value->pm_in == null || $value->pm_out == null) {
+						// code...
+						$data[] = $value;
+
+					}
+				}
+
+
+			}
+
+		}
+		return $data;
 	}
 
 	public function set_late_penalty($data='')
@@ -307,16 +364,20 @@ class Mevents extends CI_Model
 	
 
 }
-public function get_attendance($student_id='')
+
+public function listbyyearid($year_id=0)
 {
 	// code...
-/*	$sql = "SELECT student_id,event_id,date_of_event,(select timein FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as morning_in,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as morning_out FROM events_attendance as t1 GROUP by event_id,student_id;";
-*/
-
-	
+	return $this->db->get_where('events',array('year_id'=>$year_id))->result();
 }
+public function get_attendance($student_id='')
+{
 
-/*
+
+}
+	// code...
+/*	$sql = "SELECT student_id,event_id,date_of_event,(select timein FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as morning_in,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as morning_out FROM events_attendance as t1 GROUP by event_id,student_id;";
+
 
 CREATE VIEW v_events_attendance as SELECT student_id,event_id,date_of_event,penalty_late,(select timein FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as am_in,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 1 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as am_out,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 2 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as pm_in ,(select timeout FROM events_attendance as t2 WHERE t2.time_in_type = 2 and t1.student_id = t2.student_id AND t2.event_id = t1.event_id) as pm_out FROM events_attendance as t1 GROUP by event_id,student_id;
 

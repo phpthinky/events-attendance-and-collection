@@ -103,6 +103,7 @@ $.getJSON( "<?=site_url('settings/listschoolyears')?>", function( data ) {
 
 });
 
+
 })
 
 $(document).on('click','.btn-trash-sy',function(e){
@@ -132,6 +133,18 @@ $(document).on('click','.btn-trash-sy',function(e){
             })
 })
 
+$('#btn-reset-system-data').on('click',function(e){
+	e.preventDefault();
+	if(confirm('This action will permanently delete all data in your database and cannot be undone. Please make sure to have a backup first. To restore your data contact your IT administrator.')){
+	
+		$('#form-reset-system-data').trigger('submit');
+		//let password = prompt('Please enter yout password');
+
+	}else{
+		alert('No changes was made.')
+	}
+})
+
 function fill_sy_table(argument) {
 		// body...
 	$.getJSON( "<?=site_url('settings/listschoolyears')?>", function( data ) {
@@ -152,6 +165,33 @@ function fill_sy_table(argument) {
 }
 
 fill_sy_table();
+
+
+$('input[name="site_title"]').on('keyup',function(){
+
+	var formdata = {};
+		formdata.action ='site_title';
+		formdata.site_title =$(this).val();
+             $.ajax({
+                url:'<?=site_url('settings/set_sitetitle')?>',
+                data:formdata,
+                method:'POST',
+                dataType:'json',
+                success:function(response){
+                    if (response.status == true) {
+                    	$('span.errors').text(response.msg).addClass('text-success')
+                    }else{
+                    	$('span.errors').text(response.msg).addClass('text-success')
+
+                    }
+
+                },
+                error:function(i,e){
+                    console.log(i.responseText)
+                }
+            })
+
+})
 //end on load function
 });
 

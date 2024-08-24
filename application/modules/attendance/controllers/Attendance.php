@@ -22,9 +22,16 @@ class Attendance extends MY_Controller
 		$data = new stdClass();
 		$data->hasScanner = true;
 		$data->list_events = $this->mevents->list();
-		$data->event_info = $this->mevents->get_currentevent();
-		$data->content = 'attendance/index';
-		$this->template->load($this->theme,$data);
+		if($event_info = $this->mevents->get_currentevent()){
+			redirect('attendance/start/'.$event_info->id);
+			//var_dump($event_info);
+		}else{
+			redirect('events');
+		}
+		//exit();
+		//$data->event_info = $event_info;
+		///$data->content = 'attendance/index';
+		//$this->template->load($this->theme,$data);
 	}
 
 	public function start($event_id=0)
@@ -33,20 +40,25 @@ class Attendance extends MY_Controller
 		$this->load->model('course/mcourse');
 		$data = new stdClass();
 		$data->hasScanner = true;
-		$data->event_info = $this->mevents->info($event_id);
+		$event_info = $this->mevents->info($event_id);
 
-		if (!empty($data->event_info)) {
+		if(!empty($event_info)){
+			$event_info->courses = !(empty($event_info->courses)) ? implode($event_info->courses) : null;
 			// code...
-			if ($data->event_info->status == 3) {
+			$this->load->model('settings/settings_model','msettings');
+			$event_info->schoolyear = $this->msettings->get_sy($event_info->year_id);
+			if ($event_info->status == 3) {
 				// do nothing
-			}elseif($data->event_info->status == 0){
+			}elseif($event_info->status == 0){
 			$this->mevents->update($event_id,array('status'=>1));
 
 			}else{
 				// do nothing
 			}
 		}
-		$data->event_info = $this->mevents->info($event_id);		
+		$data->event_info = $event_info;
+
+		//$data->event_info = $this->mevents->info($event_id);		
 		$data->list_events = $this->mevents->list();
 		$data->content = 'attendance/index';
 		$this->template->load($this->theme,$data);
@@ -57,12 +69,15 @@ class Attendance extends MY_Controller
 		if($this->input->post()){
 			$event_id = $this->input->post('event_id');
 			$s_info = array();
+			$profile_photo = base_url('assets/img/user.png');
 			if (!$s_info = $this->mstudents->getbycode($this->input->post('student_id'))) {
 				// code...
 				echo json_encode(array('status'=>false,'msg'=>'Student does not exist.'));
 				exit();
 			}else{
 				if (!empty($s_info)) {
+					$profile_photo = $s_info->profile_photo;
+					
 					// code...
 					if (!$this->mstudents->enrolled($this->input->post('student_id'))) {
 						// code...
@@ -75,6 +90,7 @@ class Attendance extends MY_Controller
 
 						exit();
 					}
+
 				}
 
 
@@ -95,6 +111,7 @@ class Attendance extends MY_Controller
 					$result = $this->wholeday();
 						break;
 				}
+				$result['profile_photo'] = $profile_photo;
 				echo json_encode($result);
 
 				exit;
@@ -121,12 +138,12 @@ class Attendance extends MY_Controller
 				// code...
 				if ($this->input->post('in_out') == 'in') {
 					// code...	
-						echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
+						return array('status'=>false,'msg'=>'Already time in!');
 						exit();
 				}else{
 					if ($find->timeout !== null) {
 						// code...
-						echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
+						return array('status'=>false,'msg'=>'Already time out!');
 						exit();
 
 					}
@@ -178,9 +195,9 @@ class Attendance extends MY_Controller
 							// code...
 				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-				echo json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+				return array('status'=>true,'msg'=>'Time in success.');
 			}else{
-				echo json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+				return array('status'=>false,'msg'=>'Time in failed.');
 			}
 			exit;
 
@@ -226,9 +243,9 @@ class Attendance extends MY_Controller
 							// code...
 				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-					echo json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+					return array('status'=>true,'msg'=>'Time out success.');
 				}else{
-					echo json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+					return array('status'=>false,'msg'=>'Time out failed.');
 
 				}
 			}
@@ -251,12 +268,12 @@ class Attendance extends MY_Controller
 				// code...
 				if ($this->input->post('in_out') == 'in') {
 					// code...	
-						echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
+						return array('status'=>false,'msg'=>'Already time in!');
 						exit();
 				}else{
-					if ($find->timeout !== null) {
+					if ($find->pm_out !== null) {
 						// code...
-						echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
+						return array('status'=>false,'msg'=>'Already time out!');
 						exit();
 
 					}
@@ -296,7 +313,7 @@ class Attendance extends MY_Controller
 				$data =array(
 					'event_id'=>$event_id,
 					'student_id'=>$student_id,
-					'timein'=>date('Y-m-d H:i:s'),
+					'pm_in'=>date('Y-m-d H:i:s'),
 					'date_of_event'=>date('Y-m-d'),
 					'event_day'=>$this->input->post('event_day'),
 					'time_in_type'=>$in_out_type,
@@ -308,9 +325,9 @@ class Attendance extends MY_Controller
 							// code...
 				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-				echo json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+				return array('status'=>true,'msg'=>'Time in success.');
 			}else{
-				echo json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+				return array('status'=>false,'msg'=>'Time in failed.');
 			}
 			exit;
 
@@ -324,7 +341,7 @@ class Attendance extends MY_Controller
 				if (!empty($find)) {
 					// code...
 					$data =  new stdClass();
-					$data->timeout = date('Y-m-d H:i:s');
+					$data->pm_out = date('Y-m-d H:i:s');
 					$data->penalty_late = 0;
 
 					if ($find->timein == null) {
@@ -339,7 +356,7 @@ class Attendance extends MY_Controller
 				$data =array(
 					'event_id'=>$this->input->post('event_id'),
 					'student_id'=>$this->input->post('student_id'),
-					'timeout'=>date('Y-m-d H:i:s'),
+					'pm_out'=>date('Y-m-d H:i:s'),
 					'date_of_event'=>date('Y-m-d'),
 					'event_day'=>$this->input->post('event_day'),
 					'time_in_type'=>$this->input->post('in_out_type'),
@@ -356,9 +373,9 @@ class Attendance extends MY_Controller
 							// code...
 				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-					echo json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+					return array('status'=>true,'msg'=>'Time out success.');
 				}else{
-					echo json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+					return array('status'=>false,'msg'=>'Time out failed.');
 
 				}
 			}
@@ -371,9 +388,9 @@ class Attendance extends MY_Controller
 		$in_out_type = $this->input->post('in_out_type');
 		if ($in_out_type == 1) {
 			// code...
-			$this->record_am();
+			return $this->record_am();
 		}else{
-			$this->record_pm();
+			return $this->record_pm();
 		}
 	}
 	private function record_am(){
@@ -391,12 +408,12 @@ class Attendance extends MY_Controller
 				// code...
 				if ($this->input->post('in_out') == 'in') {
 					// code...	
-						echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
+						return array('status'=>false,'msg'=>'Already time in!');
 						exit();
 				}else{
 					if ($find->timeout !== null) {
 						// code...
-						echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
+						return array('status'=>false,'msg'=>'Already time out!');
 						exit();
 
 					}
@@ -446,11 +463,11 @@ class Attendance extends MY_Controller
 			
 			if ($result == true) {
 							// code...
-				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
+				//$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-				return json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+				return array('status'=>true,'msg'=>'Time in success.');
 			}else{
-				return json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+				return array('status'=>false,'msg'=>'Time in failed.');
 			}
 
 			}
@@ -493,11 +510,10 @@ class Attendance extends MY_Controller
 			
 			if ($result == true) {
 							// code...
-				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-					return json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+					return array('status'=>true,'msg'=>'Time out success.');
 				}else{
-					return json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+					return array('status'=>false,'msg'=>'Time out failed.');
 
 				}
 			}
@@ -533,13 +549,13 @@ class Attendance extends MY_Controller
 				// code...
 				if ($time_inout == 'in' && $find->pm_in !== null) {
 					// code...
-					echo json_encode(array('status'=>false,'msg'=>'Already time in!'));
+					return array('status'=>false,'msg'=>'Already time in!');
 					exit;		
 				}
 
 				if ($time_inout == 'out' && $find->pm_out !== null) {
 					// code...
-					echo json_encode(array('status'=>false,'msg'=>'Already time out!'));
+					return array('status'=>false,'msg'=>'Already time out!');
 					exit;		
 				}
 			}
@@ -578,11 +594,10 @@ class Attendance extends MY_Controller
 
 			if ($result == true) {
 							// code...
-				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
 
-					echo json_encode(array('status'=>true,'msg'=>'Time in success.','data'=>$list_attendance));
+					return array('status'=>true,'msg'=>'Time in success.');
 				}else{
-					echo json_encode(array('status'=>false,'msg'=>'Time in failed.'));
+					return array('status'=>false,'msg'=>'Time in failed.');
 
 				}
 			exit;
@@ -626,11 +641,9 @@ class Attendance extends MY_Controller
 
 			if ($result == true) {
 							// code...
-				$list_attendance = $this->mattendance->get_list($event_id,date('Y-m-d'));
-
-					echo json_encode(array('status'=>true,'msg'=>'Time out success.','data'=>$list_attendance));
+					return array('status'=>true,'msg'=>'Time out success.');
 				}else{
-					echo json_encode(array('status'=>false,'msg'=>'Time out failed.'));
+					return array('status'=>false,'msg'=>'Time out failed.');
 
 				}
 			exit;
@@ -639,7 +652,20 @@ class Attendance extends MY_Controller
 
 
 	}
-
+	public function get_list($event_id=0)
+	{
+		// code...
+		if($result = $this->mattendance->get_list($event_id,date('Y-m-d'))){
+			foreach ($result as $key => $value) {
+				// code...
+				$info = $this->mstudents->getbycode($value->student_id);
+				$result[$key]->profile_photo = $info->profile_photo;
+			}
+			echo json_encode($result);
+		}else{
+			echo json_encode(array());
+		}
+	}
 	public function end($value='')
 	{
 		// code...

@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+  <link rel="icon" href="images/favicon.ico" type="image/ico" />
 <link rel="apple-touch-icon" sizes="57x57" href="<?=assets_url()?>img/icon/apple-icon-57x57.png">
 <link rel="apple-touch-icon" sizes="60x60" href="<?=assets_url()?>img/icon/apple-icon-60x60.png">
 <link rel="apple-touch-icon" sizes="72x72" href="<?=assets_url()?>img/icon/apple-icon-72x72.png">
@@ -53,9 +53,6 @@
 
     <link href="<?=base_url()?>/template/gentelella/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css"></link>
 
-    <!-- notify -->
-    <link href="<?=base_url()?>/template/gentelella/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
-    <link href="<?=base_url()?>/template/gentelella/vendors/pnotify/dist/pnotify.mobile.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="<?=base_url()?>/template/gentelella/build/css/custom.min.css" rel="stylesheet">
 
@@ -72,19 +69,66 @@
             </div>
 
             <div class="clearfix"></div>
-  
+
+            <!-- menu profile quick info -->
+            <div class="profile clearfix">
+              <div class="profile_pic">
+                <img src="<?=base_url('assets/img/user.png')?>" alt="..." class="img-circle profile_img">
+              </div>
+              <div class="profile_info">
+                <span>Welcome,</span>
+                <h2><?=$this->session->userdata('username') ? $this->session->userdata('username') : 'Juan Dela Cruz'?></h2>
+              </div>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-             
+              <div class="menu_section">
+                <h3>General</h3>
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="<?=site_url()?>">Login</a></li>
+                    </ul>
+                  </li>
+              </div>
+
             </div>
             <!-- /sidebar menu -->
 
+            <!-- /menu footer buttons -->
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="<?=site_url('login/signout')?>">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+            <!-- /menu footer buttons -->
           </div>
         </div>
 
         <!-- top navigation -->
         <div class="top_nav">
           <div class="nav_menu">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+              <nav class="nav navbar-nav">
+              <ul class=" navbar-right">
+              </ul>
+
+            </nav>
           </div>
         </div>
         <!-- /top navigation -->
@@ -162,7 +206,6 @@
     <script src="<?=base_url()?>/template/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <!-- jQuery Smart Wizard -->
     <script src="<?=assets_url()?>plugins/notify/notify.js"></script>
-    
 
     <!-- bootstrap-daterangepicker -->
     <script src="<?=base_url()?>/template/gentelella/vendors/moment/min/moment.min.js"></script>

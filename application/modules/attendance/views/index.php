@@ -18,7 +18,9 @@
 									<?php if (!empty($event_info)): ?>
 									<label class="col-md-12">Name of event: <b><?=$event_info->event_title?></b></label>
 									<label class="col-md-12">Day:  <b><?=$event_info->no_days?></b></label>
-									<label class="col-md-12">Attendee:  <b><?=implode(', ',$event_info->courses)?></b></label>
+									<label class="col-md-12">Attendee:  <b><?=$event_info->courses?></b></label>
+									<label class="col-md-12">School Year:  <b><?=monthyear($event_info->schoolyear->start_year)?> to <?=monthyear($event_info->schoolyear->end_year)?></b></label>
+									<label class="col-md-12">Semester:  <b><?=$event_info->semester?></b></label>
 								<hr>
 									<?php if ($event_info->has_afternoon == 0): ?>
 									<label class="col-md-12">Event start:  <b><?=toMMdy($event_info->event_startdate).' '.date('h:i a',strtotime($event_info->morning_timein))?></b></label>
@@ -44,11 +46,17 @@
 							</div>
 				    <div class="col-lg-4 col-md-4 col-xs-12" >
 				    <label>Scan you qrcode here!</label>
-				    
+				    <span style="display:block;padding: 5px;font-size: 14px;" id="scan-result"></span>
 				    <div id="qr-reader"></div>
-				        
+
 				    </div>
 				    <div class="col-md-4 col-xs-12">
+
+								<div class="row">
+								<div class="preview-profile-photo"></div>
+				        
+								</div>
+
 				    	<?php if (!empty($event_info)): ?>
 							<?php if ($event_info->has_afternoon == 0): ?>
 				    		<form id="form-time-in-out" method="POST">
@@ -143,9 +151,26 @@
 				                    			<tr>
 				                    				<th>ID#</th>
 				                    				<th>Name</th>
+				                    				<th>AM Time in</th>
+				                    				<th>AM Time out</th>	                    				
+				                    				<th>PM Time in</th>
+				                    				<th>PM Time out</th>
+				                    				<th></th>
+
+				                    			</tr>
+				                    		</thead>
+				                    		<tbody>
+				                    			
+				                    		</tbody>
+				                    	</table>
+				                    	<table id="table-attendees2" class="table table-hovered d-none">
+				                    		<thead>
+				                    			<tr>
+				                    				<th>ID#</th>
+				                    				<th>Name</th>
 				                    				<th>Time in</th>
 				                    				<th>Time out</th>
-
+				                    				<th></th>
 				                    			</tr>
 				                    		</thead>
 				                    		<tbody>
@@ -164,10 +189,12 @@
 		</div> 	
 		</div>
 
-<div class="modal" id="modal-sample">
+<div class="modal" id="modal-profile">
 	<div class="modal-dialog">
 		<div class="modal-body">
-			<p>Hello</p>
+			<p>
+				<div class="preview-photo"></div>
+			</p>
 		</div>
 	</div>
 </div>

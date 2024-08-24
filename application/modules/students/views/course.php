@@ -8,7 +8,7 @@
       <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-family">Student Libary</a></li>
       <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-add">Add</a></li>
       <li class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#modal-scanner" href="#tab-quick-edit">Quick edit</a></li>
-      <li class="nav-item d-none"><a class="nav-link" data-toggle="tab" href="#tab-import">Import data</a></li>
+      <li class="nav-item"><a class="nav-link" href="<?=site_url('import')?>">Import data</a></li>
 
     </ul>
       </div>

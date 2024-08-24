@@ -17,6 +17,8 @@ class Events extends MY_Controller
 		$this->load->model('collections/mcollections');
 		$this->load->model('course/mcourse');
     	$this->load->model('settings/settings_model','msettings');
+    	$this->load->model('attendance/mattendance');
+		$this->load->model('students/mstudents');
 
 	}
 	public function index($value='')
@@ -32,6 +34,60 @@ class Events extends MY_Controller
 		$data->content = 'events/list-2';
 		$this->template->load($this->theme,$data);
 	}
+
+	public function completed($id='')
+	{
+		// code...
+		$data = new stdClass();
+		$data->event_id = $id;
+
+		$data->list_events_completed = $this->mevents->list('completed');
+		$data->list_courses = $this->mcourse->list();
+		$data->list_schoolyears = $this->msettings->listschoolyear();
+		$data->list_events_attendee = $this->mattendance->listbyevent($id);
+
+		$data->content = 'events/completed';
+		$this->template->load($this->theme,$data);
+	}
+	public function get_attendees($event_id=0,$course_id=0)
+	{
+		// code...
+
+		if($list_events_attendee = $this->mattendance->list_attendees($event_id,$course_id)){
+				$event_info = $this->mevents->info($event_id);
+			
+			foreach ($list_events_attendee as $key => $value) {
+				// code...
+				
+				$list_events_attendee[$key]->course_sub_title = $this->mcourse->get_coursesubtitle($value->course_id);
+				$list_events_attendee[$key]->event_title = $event_info->event_title;
+			}
+
+
+		echo json_encode(array('status'=>true,'data'=>$list_events_attendee));
+
+		}else{
+		echo json_encode(array('status'=>false,'data'=>array()));
+
+		}
+
+	}
+	public function listevents($year_id=0)
+	{
+		// code...
+		
+		$html = '<option value="0">No selected.</option>';
+		if($result = $this->mevents->listbyyearid($year_id)){
+			foreach ($result as $key => $value) {
+				// code...
+		$html .= '<option value="'.$value->id.'">'.$value->event_title.'</option>';
+
+			}
+		}
+		echo $html;
+
+	}
+	
 	public function create($value='')
 	{
 		
@@ -300,9 +356,26 @@ class Events extends MY_Controller
 							'event_id'=>$this->input->post('event_id'),
 							'penalty'=>$info->absent,
 							'student_id'=>$value->student_id,
-							'date_of_event'=>date('Y-m-d')
+							'date_of_event'=>date('Y-m-d'),
+							'course_id'=>$value->course_id,
+							'year_id'=>$value->year_id
 						);
 						$result = $this->mevents->set_absent_penalty($absent);
+						/*if ($result) {
+							// code...
+							$data2 = array(
+
+							'event_id'=>$this->input->post('event_id'),
+							'penalty_absent'=>1,
+							'student_id'=>$value->student_id,
+							'date_of_event'=>date('Y-m-d'),
+							'year_id'=>$value->year_id,
+							'event_day'=>$info->no_days,
+							'time_in_type'=>0
+							);
+							$this->mattendance->add($data2);
+						}
+						*/
 					}
 				}	 	
 
@@ -315,7 +388,9 @@ class Events extends MY_Controller
 							'event_id'=>$this->input->post('event_id'),
 							'penalty'=>$info->late,
 							'student_id'=>$value->student_id,
-							'date_of_event'=>date('Y-m-d')
+							'date_of_event'=>date('Y-m-d'),							
+							'course_id'=>$value->course_id,
+							'year_id'=>$value->year_id
 						);
 						$this->mevents->set_late_penalty($late);
 					}
