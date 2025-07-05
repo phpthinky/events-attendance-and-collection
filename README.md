@@ -1,10 +1,23 @@
-Evco-CMS
-This online events attendance and collection management system is design to records attendance of students in an events, add penalty for student who did not attend the events.
-the qrcode of the students id are scanned to record their attendance for quick checking and recording. 
+# QR Code Attendance & Penalty Tracking System
 
-System features:
-1. create student course
-2. add students by year and section
-3. create events by semester
-4. scanned qrcode for attendance
-5. collection by manual payment
+📍 A digital event attendance tracker with QR scanning and lateness penalty recording features.
+
+👥 Roles:
+- Attendance Officer: scans QR, logs arrival time
+- Collection Officer: views fines, updates payment status
+
+🛠️ Tech Stack:
+- PHP (CodeIgniter)
+- MySQL
+- JavaScript + QR Scanner plugin
+- Bootstrap for UI
+
+📌 Key Features:
+- Unique QR for each student
+- Logs time-in/out
+- Auto-calculate penalties for late/absent attendees
+- Payment status update module
+
+🎓 Designed as a university system demo.
+
+⚠️ Code does not include real student data. For educational use.
